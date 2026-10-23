@@ -1,0 +1,25 @@
+# Estilo comum das figuras. Todo notebook começa com:
+#     import matplotlib.pyplot as plt
+#     from analysis.config import STYLE
+#     plt.style.use(STYLE)
+
+figure.figsize: 7, 4.5
+figure.dpi: 100
+savefig.dpi: 200
+savefig.bbox: tight
+
+font.size: 12
+axes.titlesize: 14
+axes.labelsize: 12
+xtick.labelsize: 11
+ytick.labelsize: 11
+legend.fontsize: 11
+legend.frameon: False
+
+axes.spines.top: False
+axes.spines.right: False
+axes.grid: True
+grid.alpha: 0.3
+axes.prop_cycle: cycler('color', ['2453A6', 'C0504D', '2F6E4F', '8A5A12', '6A3FA0', '5B6875'])
+
+lines.linewidth: 2

@@ -1,12 +1,7 @@
-if __name__ == "__main__":
-    pass
-
-#2.126 linhas lidas, 12 duplicatas nas medidas removidas, 2.114 finais, todas as duplicatas dentro do mesmo registro e com o mesmo NSP
-
 import numpy as np, pandas as pd
 from pathlib import Path
-#from analysis.config import SEED, TEST_SIZE, RAW
-#from analysis.io import save_dataset # C2 (só quando existir)
+from analysis.config import SEED, TEST_SIZE, RAW
+from analysis.io import save_dataset
 
 COLUNAS_VAZAMENTO = ["CLASS", "A", "B", "C", "D", "E", "AD", "DE", "LD", "FS", "SUSP", "LBE", "DR"]
 IDENTIFICADORES   = ["FileName", "Date", "SegFile", "b", "e"]
@@ -42,7 +37,11 @@ def load_ctg(path):
 
 if __name__ == "__main__":
     X, y, names, groups = load_ctg(RAW / "CTG.xls")
-    conferir: X sem NaN, 3 classes em y, nenhuma coluna de vazamento em names
-    (T2) separar treino e teste por grupo
-    imprimir formato e contagem por classe em treino e teste
-    save_dataset("ctg", X_train, X_test, y_train, y_test, names)
+    assert X.shape == (2114, 20)
+    assert not np.isnan(X).any()
+    assert set(np.unique(y)) == {0, 1, 2}
+    assert not any(name in COLUNAS_VAZAMENTO for name in names)
+    print("exames por classe (normal, suspeito, patológico):", np.bincount(y))
+    print("registros distintos:", len(np.unique(groups)))
+    
+    #save_dataset("ctg", X_train, X_test, y_train, y_test, names)

@@ -4,6 +4,7 @@ import numpy as np
 
 from analysis.config import SEED, TEST_SIZE
 
+
 def group_train_test_split(
     X: np.ndarray,
     y: np.ndarray,
@@ -46,4 +47,28 @@ def group_train_test_split(
     divisão.
     """
 
-    pass
+    if not (len(X) == len(y) == len(groups)):
+        raise ValueError("X, y e groups devem ter o mesmo número de linhas.")
+    if not 0 < test_size < 1:
+        raise ValueError("test_size deve estar entre 0 e 1.")
+
+    grupos_unicos = np.unique(groups)
+    n_grupos = len(grupos_unicos)
+    n_teste = round(test_size * n_grupos)
+    n_teste = min(max(n_teste, 1), n_grupos - 1)  # pelo menos 1 grupo no teste, pelo menos 1 no treino
+
+    rng = np.random.default_rng(random_state) 
+    grupos_teste = rng.choice(grupos_unicos, size=n_teste, replace=False)
+    mascara_teste = np.isin(groups, grupos_teste)
+
+    X_train, X_test = X[~mascara_teste], X[mascara_teste]
+    y_train, y_test = y[~mascara_teste], y[mascara_teste]
+
+    print(f"treino: {len(X_train)} linhas, "
+          f"{len(np.unique(groups[~mascara_teste]))} registros, "
+          f"classes {np.bincount(y_train, minlength=3)}")
+    print(f"teste:  {len(X_test)} linhas, "
+          f"{len(np.unique(groups[mascara_teste]))} registros, "
+          f"classes {np.bincount(y_test, minlength=3)}")
+
+    return X_train, X_test, y_train, y_test

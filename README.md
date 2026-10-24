@@ -13,21 +13,6 @@ Máquina I (IMPA Tech, 2026.2).
 
 Requer Python 3.11 ou mais recente.
 
-## Microdados do ENEM 2023
-
-**Fonte:** [Microdados do ENEM — INEP](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem).
-
-**Arquivo:** `microdados_enem_2023.zip`
-
-**Localização do ZIP:** `data/raw/microdados_enem_2023.zip`
-
-**SHA-256:** `19512b7e29c9c8e94055439669722081341caa275c245a6c9d2d559c5d13a0a`
-
-O script `scripts/download_enem.py` baixa os microdados, verifica se as colunas `NU_NOTA_MT` e `Q006` estão presentes no mesmo CSV e extrai o arquivo de dados e o dicionário para `data/raw/enem/`.
-
-Para obter os dados manualmente, acesse a página de microdados do INEP, selecione a edição de 2023 e coloque o arquivo ZIP em `data/raw/`. Os microdados não devem ser versionados no Git.
-
-
 ```bash
 git clone https://github.com/ml1-impatech/statstech-analise.git
 cd statstech-analise
@@ -41,6 +26,36 @@ Depois, os notebooks na ordem: exploração, modelos e avaliação final.
 
 O `requirements.txt` instala a statstech presa numa versão e instala o código
 de `src/analysis` em modo editável.
+
+## Microdados do ENEM 2023
+
+**Fonte:** [Microdados do ENEM — INEP](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem).
+
+**Arquivo:** `microdados_enem_2023.zip`
+
+**Localização do ZIP:** `data/raw/microdados_enem_2023.zip`
+
+**SHA-256:** `19512b7e29c9c8e94055439669722081341caa275c245a6c9d2d559c5d13a0a`
+
+O script `scripts/download_enem.py` baixa os microdados, verifica se as colunas `NU_NOTA_MT` e `Q006` estão presentes no mesmo CSV e extrai o arquivo de dados e o dicionário para `data/raw/enem/`.
+
+Para obter os dados manualmente, acesse a página de microdados do INEP, selecione a edição de 2023 e coloque o arquivo ZIP em `data/raw/`. 
+
+## Preparação dos dados do ENEM
+
+O script `scripts/prepare_enem.py` prepara os microdados do ENEM 2023 para as análises de regressão do projeto.
+
+A leitura é realizada em blocos (*chunks*), utilizando `usecols` para carregar apenas as colunas necessárias e reduzir o consumo de memória.
+
+São aplicados os seguintes filtros:
+- Presença nas quatro provas objetivas: Ciências da Natureza, Ciências Humanas, Linguagens e Matemática.
+- Exclusão dos participantes identificados como treineiros.
+- Seleção dos participantes conforme o critério de conclusão do Ensino Médio (`TP_ST_CONCLUSAO == 2`).
+- Presença de notas válidas nas cinco provas, incluindo a Redação.
+
+Após a filtragem, o script informa a quantidade de participantes restantes. Na execução registrada, **1.050.863 participantes** passaram pelos filtros. Em seguida, é selecionada uma amostra aleatória de até 50.000 participantes, com reprodutibilidade garantida pela semente definida em `src/analysis/config.py`.
+
+A amostra é salva em `data/processed/enem_amostra.csv`.
 
 ## Estrutura
 

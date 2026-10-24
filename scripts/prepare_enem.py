@@ -1,8 +1,15 @@
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from analysis.config import ENEM_SAMPLE_SIZE, PROCESSED, RAW, SEED
+from analysis.enem_codes import (
+    EDUCATION_LEVELS,
+    EDUCATION_UNKNOWN,
+    OCCUPATION_GROUPS,
+    OCCUPATION_UNKNOWN,
+)
 
 score_columns = [
     "NU_NOTA_CN",
@@ -101,6 +108,74 @@ def read_enem(path: Path, columns: list[str], chunksize: int = 500_000) -> pd.Da
     )
 
     return sample_df
+
+
+def letter_scale(letters: pd.Series, mapping: dict[str, int]) -> np.ndarray:
+    """
+    Troca cada letra pelo número do mapa.
+
+    Parameters
+    ----------
+    letters: pd.Series
+      Coluna do questionário, com as letras das respostas.
+    mapping: dict[str, int]
+      Mpa de letra para número (ver analysis.enem_codes)
+
+    Returns
+    -------
+    np.ndarray
+      Um numero por participante. Letras que nao estao no mapa (como 'nao sei') viram NaN
+    """
+    return letters.map(mapping).to_numpy(dtype=float)
+
+
+def encode_enem(
+    df: pd.DataFrame, ordinal: bool = True
+) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """
+    Transforma a maostra do enem em matriz de entradas X e akvo y
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+      Amostra preparada por read_enem.
+    ordinal: bool, default=True
+      se True, escolaridade e renda entram como escala numerica
+
+    Returns
+    -------
+    X: np.ndarray
+      Matriz de entradas, uma linha por participante
+    y: np.ndarray
+      Media das cinco notas de cada participante
+    names: list[str]
+      Nome de cada coluna de X
+
+    Notes
+    -----
+    Participantes com redacao anulada ou com outro problema (TP_STATUS_REDACAO diferente de 1) sao excluidos: nesses casos a nota da redacao é 0, o que reduziria a media por um motivo que nao ede o conhecimento do aluno.
+    """
+    df = df[df["TP_STATUS_REDACAO"] == 1]
+    y = df[score_columns].mean(axis=1).to_numpy()
+
+    features: dict[str, np.ndarray] = {}
+
+    education = [("Q001", "father_education"), ("Q002", "mother_education")]
+    for column, name in education:
+        features[name] = letter_scale(df[column], EDUCATION_LEVELS)
+        features[f"{name}_unknown"] = (df[column] == EDUCATION_UNKNOWN).to_numpy(
+            dtype=float
+        )
+
+    occupation = [("Q003", "father_occupation"), ("Q004", "mother_occupation")]
+    for column, name in occupation:
+        features[name] = letter_scale(df[column], OCCUPATION_GROUPS)
+        features[f"{name}_unknown"] = (df[column] == OCCUPATION_UNKNOWN).to_numpy(
+            dtype=float
+        )
+
+    X = np.column_stack(list(features.values()))
+    return X, y, list(features)
 
 
 if __name__ == "__main__":

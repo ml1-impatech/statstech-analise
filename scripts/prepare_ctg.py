@@ -42,12 +42,14 @@ def load_ctg(path: Path) -> tuple[np.ndarray, np.ndarray, list[str], np.ndarray]
     deixaria a covariância do LDA singular. As colunas de outra
     classificação dos especialistas (CLASS, A a SUSP e outras) são
     removidas por vazamento.
+    Depois da limpeza: 1648 normais, 292 suspeitos e 174 patológicos,
+    em 352 registros distintos.
 
     References
     ----------
     UCI Machine Learning Repository, Cardiotocography.
     """
-    
+
     df = pd.read_excel(path, sheet_name="Raw Data")
     df = df.dropna(subset=["NSP"])
 

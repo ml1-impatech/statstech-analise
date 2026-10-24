@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 import pandas as pd
 
 def read_enem(
@@ -43,4 +44,17 @@ def read_enem(
             & score_filter
         )
 
-        filtered_chunks.append(chunk.loc[filter_mask])
+    filtered_df = pd.concat(filtered_chunks, ignore_index=True)
+
+    if filtered_df.empty:
+        raise ValueError("Nenhum participante passou pelos filtros.")
+
+    print(f"Participantes após os filtros: {len(filtered_df)}")
+
+    sample_df = filtered_df.sample(
+        n=min(ENEM_SAMPLE_SIZE, len(filtered_df)),
+        random_state=SEED,
+    )
+
+    return sample_df
+

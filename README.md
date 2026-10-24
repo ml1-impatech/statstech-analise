@@ -13,6 +13,21 @@ Máquina I (IMPA Tech, 2026.2).
 
 Requer Python 3.11 ou mais recente.
 
+## Microdados do ENEM 2023
+
+**Fonte:** [Microdados do ENEM — INEP](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem).
+
+**Arquivo:** `microdados_enem_2023.zip`
+
+**Localização do ZIP:** `data/raw/microdados_enem_2023.zip`
+
+**SHA-256:** `19512b7e29c9c8e94055439669722081341caa275c245a6c9d2d559c5d13a0a`
+
+O script `scripts/download_enem.py` baixa os microdados, verifica se as colunas `NU_NOTA_MT` e `Q006` estão presentes no mesmo CSV e extrai o arquivo de dados e o dicionário para `data/raw/enem/`.
+
+Para obter os dados manualmente, acesse a página de microdados do INEP, selecione a edição de 2023 e coloque o arquivo ZIP em `data/raw/`. Os microdados não devem ser versionados no Git.
+
+
 ```bash
 git clone https://github.com/ml1-impatech/statstech-analise.git
 cd statstech-analise

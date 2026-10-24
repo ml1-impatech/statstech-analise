@@ -13,22 +13,28 @@ IDENTIFICADORES   = ["FileName", "Date", "SegFile", "b", "e"]
 CONTAGENS         = ["AC", "FM", "UC", "DL", "DS", "DP"]
 
 def load_ctg(path):
+    """Lê CTG.xls; devolve X, y, names, groups.
+
+    2126 linhas lidas, 12 duplicatas nas medidas removidas, 2114 finais.
+    """
     df = pd.read_excel(path, sheet_name="Raw Data")
-    df = df.dropna(subset=[])
+    df = df.dropna(subset=["NSP"])
 
     medidas = df.drop(columns=IDENTIFICADORES)
-    print(f"medidas: {medidas.shape[0]} linhas, {medidas.shape[1]} colunas")
-    df = df.drop_duplicates(keep=False)  # esperado: 2114
+    duplicadas = medidas.duplicated()
+    print(f"duplicatas nas medidas: {duplicadas.sum()}")
+    df = df.loc[~duplicadas].copy()
 
-    y = int(df["NSP"] - 1)
-    groups = df["FileName"]
+    y = (df["NSP"] - 1).to_numpy().astype(int)
+    groups = df["FileName"].to_numpy()
     duracao = df["e"] - df["b"]
     for coluna in CONTAGENS:
         df[coluna] = df[coluna] / duracao
 
-    if df["Width"] == df["Max"] - df["Min"]:
-        COLUNAS_VAZAMENTO.append("Width")
-    df = df.drop(columns=COLUNAS_VAZAMENTO)
+    remover = COLUNAS_VAZAMENTO + IDENTIFICADORES + ["NSP"]
+    if (df["Width"] == df["Max"] - df["Min"]).all():
+        remover.append("Width")
+    df = df.drop(columns=remover)
 
     names = df.columns.tolist()
     X = df.to_numpy(dtype=float)

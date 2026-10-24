@@ -72,7 +72,7 @@ def save_dataset(
     if X_train.shape[1] != len(feature_names):
         raise ValueError(
             f"X tem {X_train.shape[1]} colunas mas "
-            f"features_name tem {len(feature_names)} nomes."
+            f"feature_names tem {len(feature_names)} nomes."
         )
     if X_train.shape[0] != y_train.shape[0]:
         raise ValueError(
@@ -111,7 +111,7 @@ def load_dataset(name: str) -> dict[str, NDArray]:
     -------
     data : dict
         Dicionário com as chaves "X_train", "X_test", "y_train",
-        "y_test" e "features_name". feature_names é um ndarray de str.
+        "y_test" e "feature_names". feature_names é um ndarray de str.
 
     Raises
     ------

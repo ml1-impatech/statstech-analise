@@ -1,3 +1,4 @@
+import hashlib
 import urllib.request
 from pathlib import Path
 
@@ -42,3 +43,16 @@ def download(url: str, dest: Path, chunk_size: int = CHUNK_SIZE) -> Path:
 
     print(f"Download concluído: {dest}")
     return dest
+
+
+def sha256(path: Path, chunk: int = CHUNK_SIZE) -> str:
+    digest = hashlib.sha256()
+
+    with path.open("rb") as arquivo:
+        while True:
+            bloco = arquivo.read(chunk)
+            if not bloco:
+                break
+            digest.update(bloco)
+
+    return digest.hexdigest()

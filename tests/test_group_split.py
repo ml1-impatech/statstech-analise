@@ -3,6 +3,7 @@ import pytest
 
 from analysis.validation import group_train_test_split
 
+
 @pytest.fixture
 def dados():
     g = np.array(["a", "a", "b", "b", "b", "c", "d", "d"])
@@ -12,18 +13,18 @@ def dados():
 
 def test_sem_vazamento(dados):
     X, y, g = dados
-    X_train, X_test, y_train, y_test = group_train_test_split(
+    X_train, X_test, _, _ = group_train_test_split(
         X, y, g, test_size=0.5, random_state=0
     )
-    grupos_treino = ...   # g indexado pelos índices que estão em X_train[:, 0]
-    grupos_teste = ...    # idem para X_test
+    grupos_treino = g[X_train[:, 0]]
+    grupos_teste = g[X_test[:, 0]]
     assert set(grupos_treino) & set(grupos_teste) == set()
 
 
 def test_cobre_tudo(dados):
     X, y, g = dados
     X_train, X_test, _, _ = group_train_test_split(X, y, g, test_size=0.5)
-    todos = ...           # junta os índices de treino e teste e ordena
+    todos = np.sort(np.concatenate((X_train[:, 0], X_test[:, 0])))
     np.testing.assert_array_equal(todos, np.arange(len(X)))
 
 
@@ -31,8 +32,7 @@ def test_reprodutivel(dados):
     X, y, g = dados
     a = group_train_test_split(X, y, g, random_state=0)
     b = group_train_test_split(X, y, g, random_state=0)
-    ...                   # compare o X_train de a com o de b
-
+    np.testing.assert_array_equal(a[0], b[0])
 
 def test_erros(dados):
     X, y, g = dados

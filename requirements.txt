@@ -1,0 +1,14 @@
+# Biblioteca do grupo, presa num commit para a análise ser reproduzível.
+# Lembrar de trocar pela tag (@v1.0) quando a versão final da statstech for criada.
+statstech @ git+https://github.com/ml1-impatech/statstech.git@531a9051351065eced9880a174de082f7ffed88a
+
+numpy>=1.26
+matplotlib>=3.8
+
+pandas>=2.1
+xlrd>=2.0
+
+pytest>=8
+
+# Instala src/analysis em modo editável (from analysis.config import SEED).
+-e .

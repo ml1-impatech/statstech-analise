@@ -218,3 +218,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---------------------------------------------------------------
+# statstech-analise
+# ---------------------------------------------------------------
+# Dados processados: são gerados pelos scripts de preparação.
+data/processed/*
+!data/processed/.gitkeep
+
+# Microdados do ENEM: grandes demais para o git, baixados por
+# scripts/download_enem.py. A CTG (CTG.xls) é versionada.
+data/raw/enem/
+data/raw/*.zip
+data/raw/MICRODADOS_ENEM_*

@@ -1,7 +1,8 @@
 from pathlib import Path
-from analysis.config import ENEM_SAMPLE_SIZE, SEED, RAW, PROCESSED
 
 import pandas as pd
+
+from analysis.config import ENEM_SAMPLE_SIZE, PROCESSED, RAW, SEED
 
 score_columns = [
     "NU_NOTA_CN",
@@ -31,10 +32,38 @@ other_columns = [
 
 questionnaire_columns = [f"Q{i:03d}" for i in range(1, 26)]
 
-def read_enem(
-    path: Path,
-    columns: list[str],
-    chunksize: int = 500_000) -> pd.DataFrame:
+
+def read_enem(path: Path, columns: list[str], chunksize: int = 500_000) -> pd.DataFrame:
+    """
+    Lê e filtra os microdados do ENEM em blocos e seleciona uma amostra.
+
+    Parameters
+    ----------
+    path : Path
+        Caminho para o arquivo CSV dos microdados do ENEM.
+    columns : list[str]
+        Colunas que serão carregadas do arquivo.
+    chunksize : int, default=500_000
+        Número de linhas lidas por bloco.
+
+    Returns
+    -------
+    pd.DataFrame
+        Amostra aleatória dos participantes que passaram pelos filtros.
+
+    Raises
+    ------
+    ValueError
+        Se nenhum bloco for lido ou nenhum participante passar pelos filtros.
+
+    Notes
+    -----
+    São mantidos os participantes que estiveram presentes nas quatro provas
+    objetivas, não são treineiros, atendem ao critério de conclusão do Ensino
+    Médio definido por TP_ST_CONCLUSAO == 2 e possuem notas nas cinco provas.
+    O tamanho da amostra e a semente aleatória são definidos em
+    analysis.config.
+    """
     chunks = pd.read_csv(
         path,
         sep=";",
@@ -51,14 +80,11 @@ def read_enem(
         score_filter = chunk[score_columns].notna().all(axis=1)
 
         filter_mask = (
-            presence_filter
-            & trainee_filter
-            & completion_filter
-            & score_filter
+            presence_filter & trainee_filter & completion_filter & score_filter
         )
 
         filtered_chunks.append(chunk.loc[filter_mask])
-        
+
     if not filtered_chunks:
         raise ValueError("Nenhum bloco foi lido do arquivo.")
 
@@ -78,12 +104,7 @@ def read_enem(
 
 
 if __name__ == "__main__":
-    columns = (
-        score_columns
-        + presence_columns
-        + other_columns
-        + questionnaire_columns
-    )       
+    columns = score_columns + presence_columns + other_columns + questionnaire_columns
 
     sample_df = read_enem(
         RAW / "enem" / "MICRODADOS_ENEM_2023.csv",
@@ -98,7 +119,3 @@ if __name__ == "__main__":
     )
 
     print("Amostra salva com sucesso!")
-
-
-
-    

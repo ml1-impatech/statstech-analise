@@ -1,3 +1,5 @@
+import zipfile
+import io
 import hashlib
 import urllib.request
 from pathlib import Path
@@ -56,3 +58,18 @@ def sha256(path: Path, chunk: int = CHUNK_SIZE) -> str:
             digest.update(bloco)
 
     return digest.hexdigest()
+
+def check_csv_columns(zip_file: zipfile.ZipFile, filename: str) -> None:
+    with zip_file.open(filename) as file:
+        text_file = io.TextIOWrapper(file, encoding="latin-1")
+        header = text_file.readline().rstrip("\r\n")
+
+    columns = {column.strip() for column in header.split(";")}
+    required_columns = {"NU_NOTA_MT", "Q006"}
+    missing_columns = required_columns - columns
+
+    if missing_columns:
+        raise ValueError(
+            f"The CSV file {filename} is missing columns: "
+            f"{sorted(missing_columns)}"
+        )

@@ -1,7 +1,35 @@
 from pathlib import Path
-
+from analysis.config import ENEM_SAMPLE_SIZE, SEED, RAW, PROCESSED
 
 import pandas as pd
+
+score_columns = [
+    "NU_NOTA_CN",
+    "NU_NOTA_CH",
+    "NU_NOTA_LC",
+    "NU_NOTA_MT",
+    "NU_NOTA_REDACAO",
+]
+
+presence_columns = [
+    "TP_PRESENCA_CN",
+    "TP_PRESENCA_CH",
+    "TP_PRESENCA_LC",
+    "TP_PRESENCA_MT",
+]
+
+other_columns = [
+    "TP_ST_CONCLUSAO",
+    "IN_TREINEIRO",
+    "TP_STATUS_REDACAO",
+    "TP_ESCOLA",
+    "SG_UF_PROVA",
+    "TP_FAIXA_ETARIA",
+    "TP_SEXO",
+    "TP_COR_RACA",
+]
+
+questionnaire_columns = [f"Q{i:03d}" for i in range(1, 26)]
 
 def read_enem(
     path: Path,
@@ -17,32 +45,22 @@ def read_enem(
     filtered_chunks = []
 
     for chunk in chunks:
-        presence_columns = [
-            "TP_PRESENCA_CN",
-            "TP_PRESENCA_CH",
-            "TP_PRESENCA_LC",
-            "TP_PRESENCA_MT",
-        ]
-
         presence_filter = (chunk[presence_columns] == 1).all(axis=1)
         trainee_filter = chunk["IN_TREINEIRO"] == 0
         completion_filter = chunk["TP_ST_CONCLUSAO"] == 2
-        
-        score_columns = [
-            "NU_NOTA_CN",
-            "NU_NOTA_CH",
-            "NU_NOTA_LC",
-            "NU_NOTA_MT",
-            "NU_NOTA_REDACAO",
-        ]
-
         score_filter = chunk[score_columns].notna().all(axis=1)
+
         filter_mask = (
             presence_filter
             & trainee_filter
             & completion_filter
             & score_filter
         )
+
+        filtered_chunks.append(chunk.loc[filter_mask])
+        
+    if not filtered_chunks:
+        raise ValueError("Nenhum bloco foi lido do arquivo.")
 
     filtered_df = pd.concat(filtered_chunks, ignore_index=True)
 
@@ -58,3 +76,29 @@ def read_enem(
 
     return sample_df
 
+
+if __name__ == "__main__":
+    columns = (
+        score_columns
+        + presence_columns
+        + other_columns
+        + questionnaire_columns
+    )       
+
+    sample_df = read_enem(
+        RAW / "enem" / "MICRODADOS_ENEM_2023.csv",
+        columns,
+    )
+
+    PROCESSED.mkdir(parents=True, exist_ok=True)
+
+    sample_df.to_csv(
+        PROCESSED / "enem_amostra.csv",
+        index=False,
+    )
+
+    print("Amostra salva com sucesso!")
+
+
+
+    

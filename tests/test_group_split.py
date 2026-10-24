@@ -1,14 +1,45 @@
-dados pequenos feitos à mão: ~10 linhas, 4 grupos de tamanhos diferentes
+import numpy as np
+import pytest
 
-teste_sem_vazamento:
-    grupos do treino e grupos do teste não têm elementos em comum
+from analysis.validation import group_train_test_split
 
-teste_cobre_tudo:
-    linhas do treino + linhas do teste = total, sem repetição
+@pytest.fixture
+def dados():
+    g = np.array(["a", "a", "b", "b", "b", "c", "d", "d"])
+    X = np.arange(8).reshape(-1, 1)
+    y = np.array([0, 0, 1, 1, 1, 2, 0, 0])
+    return X, y, g
 
-teste_reprodutivel:
-    mesma semente -> mesmo resultado; sementes diferentes -> pode mudar
+def test_sem_vazamento(dados):
+    X, y, g = dados
+    X_train, X_test, y_train, y_test = group_train_test_split(
+        X, y, g, test_size=0.5, random_state=0
+    )
+    grupos_treino = ...   # g indexado pelos índices que estão em X_train[:, 0]
+    grupos_teste = ...    # idem para X_test
+    assert set(grupos_treino) & set(grupos_teste) == set()
 
-teste_erros:
-    tamanhos diferentes de X, y e groups levantam ValueError
-    test_size fora de (0, 1) levanta ValueError
+
+def test_cobre_tudo(dados):
+    X, y, g = dados
+    X_train, X_test, _, _ = group_train_test_split(X, y, g, test_size=0.5)
+    todos = ...           # junta os índices de treino e teste e ordena
+    np.testing.assert_array_equal(todos, np.arange(len(X)))
+
+
+def test_reprodutivel(dados):
+    X, y, g = dados
+    a = group_train_test_split(X, y, g, random_state=0)
+    b = group_train_test_split(X, y, g, random_state=0)
+    ...                   # compare o X_train de a com o de b
+
+
+def test_erros(dados):
+    X, y, g = dados
+    with pytest.raises(ValueError):
+        group_train_test_split(X, y[:-1], g)
+    with pytest.raises(ValueError):
+        group_train_test_split(X, y, g[:-1])
+    for tamanho in (0, 1):
+        with pytest.raises(ValueError):
+            group_train_test_split(X, y, g, test_size=tamanho)

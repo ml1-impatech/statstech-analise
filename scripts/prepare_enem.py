@@ -7,6 +7,7 @@ from analysis.config import ENEM_SAMPLE_SIZE, PROCESSED, RAW, SEED
 from analysis.enem_codes import (
     EDUCATION_LEVELS,
     EDUCATION_UNKNOWN,
+    INCOME_MIDPOINTS,
     OCCUPATION_GROUPS,
     OCCUPATION_UNKNOWN,
 )
@@ -173,6 +174,11 @@ def encode_enem(
         features[f"{name}_unknown"] = (df[column] == OCCUPATION_UNKNOWN).to_numpy(
             dtype=float
         )
+
+    household_size = df["Q005"].to_numpy(dtype=float)
+    income = df["Q006"].map(INCOME_MIDPOINTS).to_numpy(dtype=float)
+    features["household_size"] = household_size
+    features["log_income_per_capita"] = np.log1p(income / household_size)
 
     X = np.column_stack(list(features.values()))
     return X, y, list(features)

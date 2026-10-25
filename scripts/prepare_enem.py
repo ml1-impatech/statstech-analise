@@ -5,6 +5,8 @@ import pandas as pd
 
 from analysis.config import ENEM_SAMPLE_SIZE, PROCESSED, RAW, SEED
 from analysis.enem_codes import (
+    ASSET_COLUMNS,
+    ASSET_LEVELS,
     EDUCATION_LEVELS,
     EDUCATION_UNKNOWN,
     INCOME_MIDPOINTS,
@@ -179,6 +181,9 @@ def encode_enem(
     income = df["Q006"].map(INCOME_MIDPOINTS).to_numpy(dtype=float)
     features["household_size"] = household_size
     features["log_income_per_capita"] = np.log1p(income / household_size)
+
+    for column, name in ASSET_COLUMNS.items():
+        features[name] = letter_scale(df[column], ASSET_LEVELS)
 
     X = np.column_stack(list(features.values()))
     return X, y, list(features)

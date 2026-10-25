@@ -48,3 +48,30 @@ INCOME_MIDPOINTS = {
     "P": 23100.0,
     "Q": 29700.0,
 }
+
+# Bens da residência (Q007 a Q025). Em todas as perguntas, "A" é "Não" e as
+# letras seguintes são a quantidade ("B" = um ou "Sim", "C" = dois, ...).
+ASSET_LEVELS = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4}
+
+# Coluna do questionário e nome usado em X, na ordem das perguntas.
+ASSET_COLUMNS = {
+    "Q007": "domestic_worker",
+    "Q008": "bathrooms",
+    "Q009": "bedrooms",
+    "Q010": "cars",
+    "Q011": "motorcycles",
+    "Q012": "refrigerators",
+    "Q013": "freezers",
+    "Q014": "washing_machines",
+    "Q015": "dryers",
+    "Q016": "microwaves",
+    "Q017": "dishwashers",
+    "Q018": "vacuum_cleaner",
+    "Q019": "televisions",
+    "Q020": "dvd_player",
+    "Q021": "cable_tv",
+    "Q022": "mobile_phones",
+    "Q023": "landline",
+    "Q024": "computers",
+    "Q025": "internet",
+}

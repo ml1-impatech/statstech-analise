@@ -75,3 +75,35 @@ ASSET_COLUMNS = {
     "Q024": "computers",
     "Q025": "internet",
 }
+
+# Região do país de cada estado (SG_UF_PROVA). Com 27 estados, uma coluna por
+# estado seria demais para pouca informação; as 5 regiões bastam.
+REGION_BY_UF = {
+    "AC": "Norte",
+    "AM": "Norte",
+    "AP": "Norte",
+    "PA": "Norte",
+    "RO": "Norte",
+    "RR": "Norte",
+    "TO": "Norte",
+    "AL": "Nordeste",
+    "BA": "Nordeste",
+    "CE": "Nordeste",
+    "MA": "Nordeste",
+    "PB": "Nordeste",
+    "PE": "Nordeste",
+    "PI": "Nordeste",
+    "RN": "Nordeste",
+    "SE": "Nordeste",
+    "DF": "Centro-Oeste",
+    "GO": "Centro-Oeste",
+    "MS": "Centro-Oeste",
+    "MT": "Centro-Oeste",
+    "ES": "Sudeste",
+    "MG": "Sudeste",
+    "RJ": "Sudeste",
+    "SP": "Sudeste",
+    "PR": "Sul",
+    "RS": "Sul",
+    "SC": "Sul",
+}

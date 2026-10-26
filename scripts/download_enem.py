@@ -54,15 +54,15 @@ def download(url: str, dest: Path, chunk: int = 1 << 20) -> Path:
     temporario = dest.with_suffix(dest.suffix + ".part")
 
     try:
-        with(
+        with (
             urllib.request.urlopen(url, timeout=60) as resposta,
             temporario.open("wb") as arquivo,
         ):
-                while True:
-                    bloco = resposta.read(chunk)
-                    if not bloco:
-                        break
-                    arquivo.write(bloco)
+            while True:
+                bloco = resposta.read(chunk)
+                if not bloco:
+                    break
+                arquivo.write(bloco)
 
         temporario.replace(dest)
 

@@ -70,9 +70,8 @@ statstech-analise/
 ├── src/analysis/
 │   ├── config.py          semente, tamanhos e caminhos
 │   ├── io.py              salvar e carregar as bases preparadas
-│   ├── models.py          StandardScaler ajustado dentro de cada fold
-│   ├── validation.py      previsões por validação cruzada e divisão estratificada
-│   ├── evaluation.py      métricas e intervalos bootstrap
+│   ├── validation.py      divisão em treino e teste por registro
+│   ├── evaluation.py      métricas padronizadas para todos os modelos
 │   ├── report.py          tabelas e figuras em results/
 │   ├── threshold.py       limiar de decisão da CTG
 │   └── enem_codes.py      mapas do questionário do ENEM

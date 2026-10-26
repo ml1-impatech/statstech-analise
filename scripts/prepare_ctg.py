@@ -4,6 +4,13 @@ import numpy as np
 import pandas as pd
 
 from analysis.config import RAW
+from analysis.io import save_dataset
+from analysis.validation import group_train_test_split
+
+import numpy as np
+import pandas as pd
+
+from analysis.config import RAW
 
 COLUNAS_VAZAMENTO = [
     "CLASS",
@@ -97,7 +104,13 @@ if __name__ == "__main__":
     assert not np.isnan(X).any()
     assert set(np.unique(y)) == {0, 1, 2}
     assert not any(name in COLUNAS_VAZAMENTO for name in names)
+
+    X_train, X_test, y_train, y_test = group_train_test_split(X, y, groups)
+    print("formatos:", X_train.shape, X_test.shape, y_train.shape, y_test.shape)
+        
     print("exames por classe (normal, suspeito, patológico):", np.bincount(y))
     print("registros distintos:", len(np.unique(groups)))
+    
+    save_dataset("ctg", X_train, X_test, y_train, y_test, names)
 
-    # save_dataset("ctg", X_train, X_test, y_train, y_test, names)
+    

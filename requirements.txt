@@ -1,6 +1,6 @@
 # Biblioteca do grupo, presa num commit para a análise ser reproduzível.
 # Lembrar de trocar pela tag (@v1.0) quando a versão final da statstech for criada.
-statstech @ git+https://github.com/ml1-impatech/statstech.git@531a9051351065eced9880a174de082f7ffed88a
+statstech @ git+https://github.com/ml1-impatech/statstech.git@379eeb68673d05a2af6d02083d37e3737b1805e8
 
 numpy>=1.26
 matplotlib>=3.8

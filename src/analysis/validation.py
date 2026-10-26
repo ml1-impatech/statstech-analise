@@ -72,3 +72,46 @@ def group_train_test_split(
           f"classes {np.bincount(y_test, minlength=3)}")
 
     return X_train, X_test, y_train, y_test
+
+
+class StratifiedGroupKFold:
+    """K folds que sorteiam registros inteiros e equilibram as classes.
+    
+    Parameters
+    ----------
+    #TODO
+    
+    Raises
+    ------
+    #TODO
+    """
+    
+    def __init(
+        self, groups: np.ndarray, n_splits: int = 10, random_state: int = SEED
+    ) -> None:
+        self.groups = np.asarray(groups)
+        self.n_splits = n_splits
+        self.random_state = random_state
+        n_groups = len(np.unique(self.groups))
+        if not 2 <= n_splits <= n_groups:
+            raise ValueError(
+                f"n_splits deve estar entre 2 e o número de grupos ({n_groups})."
+            )
+        
+    def split(self, X: np.ndarray, y: np.ndarray | None = None):
+        """Gera os índices de treino e de validação dde cada fold.
+            
+        Parameters
+        ----------
+        #TODO
+            
+        Yields
+        ------
+        #TODO
+            
+        Raises
+        ------
+        #TODO
+            
+        """
+        pass

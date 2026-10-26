@@ -7,9 +7,29 @@ from analysis.config import RAW
 from analysis.io import save_dataset
 from analysis.validation import group_train_test_split
 
-COLUNAS_VAZAMENTO = ["CLASS", "A", "B", "C", "D", "E", "AD", "DE", "LD", "FS", "SUSP", "LBE", "DR"]
-IDENTIFICADORES   = ["FileName", "Date", "SegFile", "b", "e"]
-CONTAGENS         = ["AC", "FM", "UC", "DL", "DS", "DP"]
+import numpy as np
+import pandas as pd
+
+from analysis.config import RAW
+
+COLUNAS_VAZAMENTO = [
+    "CLASS",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "AD",
+    "DE",
+    "LD",
+    "FS",
+    "SUSP",
+    "LBE",
+    "DR",
+]
+IDENTIFICADORES = ["FileName", "Date", "SegFile", "b", "e"]
+CONTAGENS = ["AC", "FM", "UC", "DL", "DS", "DP"]
+
 
 def load_ctg(path: Path) -> tuple[np.ndarray, np.ndarray, list[str], np.ndarray]:
     """Lê a planilha da cardiotocografia (UCI) e prepara X, y e os grupos.
@@ -77,6 +97,7 @@ def load_ctg(path: Path) -> tuple[np.ndarray, np.ndarray, list[str], np.ndarray]
     X = df.to_numpy(dtype=float)
     return X, y, names, groups
 
+
 if __name__ == "__main__":
     X, y, names, groups = load_ctg(RAW / "CTG.xls")
     assert X.shape == (2114, 20)
@@ -91,3 +112,5 @@ if __name__ == "__main__":
     print("registros distintos:", len(np.unique(groups)))
     
     save_dataset("ctg", X_train, X_test, y_train, y_test, names)
+
+    

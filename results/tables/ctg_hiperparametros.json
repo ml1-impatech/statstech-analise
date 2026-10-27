@@ -1,0 +1,38 @@
+{
+  "seed": 72,
+  "logistic": {
+    "fixed": {
+      "model__learning_rate": 1.0,
+      "model__max_iter": 5000
+    },
+    "params": {
+      "model__alpha": 10
+    },
+    "f1_macro_cv": 0.7795086147375883,
+    "uses_log1p": false
+  },
+  "lda": {
+    "fixed": {},
+    "params": {
+      "model__reg_param": 1e-06
+    },
+    "f1_macro_cv": 0.7148745047091947,
+    "uses_log1p": false
+  },
+  "qda": {
+    "fixed": {},
+    "params": {
+      "model__reg_param": 0.5
+    },
+    "f1_macro_cv": 0.7330046062661676,
+    "uses_log1p": false
+  },
+  "knn": {
+    "fixed": {},
+    "params": {
+      "model__n_neighbors": 15
+    },
+    "f1_macro_cv": 0.7230482757329383,
+    "uses_log1p": false
+  }
+}

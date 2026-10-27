@@ -124,7 +124,9 @@ def load_dataset(name: str) -> dict[str, NDArray]:
     script = SCRIPTS.get(name, "o script de preparação")
 
     if not path.exists():
-        raise FileNotFoundError(f"{path} não encontrado. Rode antes: python scripts/{script}")
+        raise FileNotFoundError(
+            f"{path} não encontrado. Rode antes: python scripts/{script}"
+        )
 
     with np.load(path) as npz:
         data = {key: npz[key] for key in npz.files}

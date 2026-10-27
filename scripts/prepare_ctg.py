@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from analysis.config import RAW
+from analysis.config import PROCESSED, RAW
 from analysis.io import save_dataset
 from analysis.validation import group_train_test_split
 
@@ -96,3 +96,5 @@ if __name__ == "__main__":
     print("registros distintos:", len(np.unique(groups)))
 
     save_dataset("ctg", X_train, X_test, y_train, y_test, names)
+    groups_train, _, _, _ = group_train_test_split(groups[:, None], y, groups)
+    np.save(PROCESSED / "ctg_groups_train.npy", groups_train[:, 0].astype(str))

@@ -107,10 +107,8 @@ if __name__ == "__main__":
 
     X_train, X_test, y_train, y_test = group_train_test_split(X, y, groups)
     print("formatos:", X_train.shape, X_test.shape, y_train.shape, y_test.shape)
-        
+
     print("exames por classe (normal, suspeito, patológico):", np.bincount(y))
     print("registros distintos:", len(np.unique(groups)))
-    
-    save_dataset("ctg", X_train, X_test, y_train, y_test, names)
 
-    
+    save_dataset("ctg", X_train, X_test, y_train, y_test, names)

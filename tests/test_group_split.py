@@ -11,6 +11,7 @@ def dados():
     y = np.array([0, 0, 1, 1, 1, 2, 0, 0])
     return X, y, g
 
+
 def test_sem_vazamento(dados):
     X, y, g = dados
     X_train, X_test, _, _ = group_train_test_split(
@@ -33,6 +34,7 @@ def test_reprodutivel(dados):
     a = group_train_test_split(X, y, g, random_state=0)
     b = group_train_test_split(X, y, g, random_state=0)
     np.testing.assert_array_equal(a[0], b[0])
+
 
 def test_erros(dados):
     X, y, g = dados

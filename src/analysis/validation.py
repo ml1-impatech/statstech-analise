@@ -55,20 +55,26 @@ def group_train_test_split(
     grupos_unicos = np.unique(groups)
     n_grupos = len(grupos_unicos)
     n_teste = round(test_size * n_grupos)
-    n_teste = min(max(n_teste, 1), n_grupos - 1)  # pelo menos 1 grupo no teste, pelo menos 1 no treino
+    n_teste = min(
+        max(n_teste, 1), n_grupos - 1
+    )  # pelo menos 1 grupo no teste, pelo menos 1 no treino
 
-    rng = np.random.default_rng(random_state) 
+    rng = np.random.default_rng(random_state)
     grupos_teste = rng.choice(grupos_unicos, size=n_teste, replace=False)
     mascara_teste = np.isin(groups, grupos_teste)
 
     X_train, X_test = X[~mascara_teste], X[mascara_teste]
     y_train, y_test = y[~mascara_teste], y[mascara_teste]
 
-    print(f"treino: {len(X_train)} linhas, "
-          f"{len(np.unique(groups[~mascara_teste]))} registros, "
-          f"classes {np.bincount(y_train, minlength=3)}")
-    print(f"teste:  {len(X_test)} linhas, "
-          f"{len(np.unique(groups[mascara_teste]))} registros, "
-          f"classes {np.bincount(y_test, minlength=3)}")
+    print(
+        f"treino: {len(X_train)} linhas, "
+        f"{len(np.unique(groups[~mascara_teste]))} registros, "
+        f"classes {np.bincount(y_train, minlength=3)}"
+    )
+    print(
+        f"teste:  {len(X_test)} linhas, "
+        f"{len(np.unique(groups[mascara_teste]))} registros, "
+        f"classes {np.bincount(y_test, minlength=3)}"
+    )
 
     return X_train, X_test, y_train, y_test

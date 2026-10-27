@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from statstech.preprocessing import OneHotEncoder
 
 from analysis.config import ENEM_SAMPLE_SIZE, PROCESSED, RAW, SEED
 from analysis.enem_codes import (
@@ -12,6 +13,7 @@ from analysis.enem_codes import (
     INCOME_MIDPOINTS,
     OCCUPATION_GROUPS,
     OCCUPATION_UNKNOWN,
+    REGION_BY_UF,
 )
 
 score_columns = [
@@ -184,6 +186,25 @@ def encode_enem(
 
     for column, name in ASSET_COLUMNS.items():
         features[name] = letter_scale(df[column], ASSET_LEVELS)
+
+    categorical = {
+        "school": df["TP_ESCOLA"],
+        "region": df["SG_UF_PROVA"].map(REGION_BY_UF),
+        "sex": df["TP_SEXO"],
+        "race": df["TP_COR_RACA"],
+        "age_group": df["TP_FAIXA_ETARIA"],
+    }
+    encoder = OneHotEncoder(drop="first")
+    encoded = encoder.fit_transform(
+        np.column_stack(
+            [values.to_numpy().astype(str) for values in categorical.values()]
+        )
+    )
+    column = 0
+    for j, variable in enumerate(categorical):
+        for category in encoder.categories_[j][1:]:
+            features[f"{variable}_{category}"] = encoded[:, column]
+            column += 1
 
     X = np.column_stack(list(features.values()))
     return X, y, list(features)

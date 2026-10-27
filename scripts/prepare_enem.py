@@ -1,8 +1,20 @@
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+from statstech.preprocessing import OneHotEncoder
 
 from analysis.config import ENEM_SAMPLE_SIZE, PROCESSED, RAW, SEED
+from analysis.enem_codes import (
+    ASSET_COLUMNS,
+    ASSET_LEVELS,
+    EDUCATION_LEVELS,
+    EDUCATION_UNKNOWN,
+    INCOME_MIDPOINTS,
+    OCCUPATION_GROUPS,
+    OCCUPATION_UNKNOWN,
+    REGION_BY_UF,
+)
 
 score_columns = [
     "NU_NOTA_CN",
@@ -101,6 +113,116 @@ def read_enem(path: Path, columns: list[str], chunksize: int = 500_000) -> pd.Da
     )
 
     return sample_df
+
+
+def letter_scale(letters: pd.Series, mapping: dict[str, int]) -> np.ndarray:
+    """
+    Troca cada letra pelo número do mapa.
+
+    Parameters
+    ----------
+    letters: pd.Series
+      Coluna do questionário, com as letras das respostas.
+    mapping: dict[str, int]
+      Mpa de letra para número (ver analysis.enem_codes)
+
+    Returns
+    -------
+    np.ndarray
+      Um numero por participante. Letras que nao estao no mapa (como 'nao sei') viram NaN
+    """
+    return letters.map(mapping).to_numpy(dtype=float)
+
+
+def encode_enem(
+    df: pd.DataFrame, ordinal: bool = True
+) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """
+    Transforma a amostra do ENEM em matriz de entradas X e alvo y.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Amostra preparada por read_enem.
+    ordinal : bool, default=True
+        Se True, a escolaridade dos pais e a renda entram como escala
+        numérica. Se False, entram como categorias em one-hot.
+
+    Returns
+    -------
+    X : np.ndarray
+        Matriz de entradas, uma linha por participante.
+    y : np.ndarray
+        Média das cinco notas de cada participante.
+    names : list[str]
+        Nome de cada coluna de X.
+
+    Notes
+    -----
+    Participantes com redação anulada ou com outro problema
+    (TP_STATUS_REDACAO diferente de 1) são excluídos: nesses casos a nota da
+    redação é 0, o que reduziria a média por um motivo que não mede o
+    conhecimento do aluno.
+
+    Com ordinal=False, Q001, Q002 e Q006 viram colunas 0/1, uma por letra
+    ("não sei" é uma categoria como as outras), e saem a escolaridade em
+    escala e a renda per capita. O número de pessoas na casa continua.
+    """
+    df = df[df["TP_STATUS_REDACAO"] == 1]
+    y = df[score_columns].mean(axis=1).to_numpy()
+
+    features: dict[str, np.ndarray] = {}
+
+    if ordinal:
+        education = [("Q001", "father_education"), ("Q002", "mother_education")]
+        for column, name in education:
+            features[name] = letter_scale(df[column], EDUCATION_LEVELS)
+            features[f"{name}_unknown"] = (df[column] == EDUCATION_UNKNOWN).to_numpy(
+                dtype=float
+            )
+
+    occupation = [("Q003", "father_occupation"), ("Q004", "mother_occupation")]
+    for column, name in occupation:
+        features[name] = letter_scale(df[column], OCCUPATION_GROUPS)
+        features[f"{name}_unknown"] = (df[column] == OCCUPATION_UNKNOWN).to_numpy(
+            dtype=float
+        )
+
+    household_size = df["Q005"].to_numpy(dtype=float)
+    features["household_size"] = household_size
+    if ordinal:
+        income = df["Q006"].map(INCOME_MIDPOINTS).to_numpy(dtype=float)
+        features["log_income_per_capita"] = np.log1p(income / household_size)
+
+    for column, name in ASSET_COLUMNS.items():
+        features[name] = letter_scale(df[column], ASSET_LEVELS)
+
+    categorical = {
+        "school": df["TP_ESCOLA"],
+        "region": df["SG_UF_PROVA"].map(REGION_BY_UF),
+        "sex": df["TP_SEXO"],
+        "race": df["TP_COR_RACA"],
+        "age_group": df["TP_FAIXA_ETARIA"],
+    }
+    if not ordinal:
+        categorical["father_education"] = df["Q001"]
+        categorical["mother_education"] = df["Q002"]
+        categorical["income_range"] = df["Q006"]
+
+    encoder = OneHotEncoder(drop="first")
+    encoded = encoder.fit_transform(
+        np.column_stack(
+            [values.to_numpy().astype(str) for values in categorical.values()]
+        )
+    )
+    column = 0
+    for j, variable in enumerate(categorical):
+        for category in encoder.categories_[j][1:]:
+            features[f"{variable}_{category}"] = encoded[:, column]
+            column += 1
+
+    X = np.column_stack(list(features.values()))
+    return X, y, list(features)
 
 
 if __name__ == "__main__":

@@ -14,7 +14,6 @@ LEAKAGE_COLUMNS = [
 IDENTIFIER_COLUMNS = ["FileName", "Date", "SegFile", "b", "e"]
 COUNT_COLUMNS = ["AC", "FM", "UC", "DL", "DS", "DP"]
 
-
 def load_ctg(path: Path) -> tuple[np.ndarray, np.ndarray, list[str], np.ndarray]:
     """Lê a planilha da cardiotocografia (UCI) e prepara X, y e os grupos.
 
@@ -80,6 +79,7 @@ def load_ctg(path: Path) -> tuple[np.ndarray, np.ndarray, list[str], np.ndarray]
     names = df.columns.tolist()
     X = df.to_numpy(dtype=float)
     return X, y, names, groups
+
 
 
 if __name__ == "__main__":

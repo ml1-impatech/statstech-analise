@@ -52,23 +52,24 @@ def group_train_test_split(
     if not 0 < test_size < 1:
         raise ValueError("test_size deve estar entre 0 e 1.")
 
-    grupos_unicos = np.unique(groups)
-    n_grupos = len(grupos_unicos)
-    n_teste = round(test_size * n_grupos)
-    n_teste = min(max(n_teste, 1), n_grupos - 1)  # pelo menos 1 grupo no teste, pelo menos 1 no treino
+    unique_groups = np.unique(groups)
+    n_groups = len(unique_groups)
+    n_test = round(test_size * n_groups)
+    # pelo menos 1 grupo no teste, pelo menos 1 no treino
+    n_test = min(max(n_test, 1), n_groups - 1)  
 
     rng = np.random.default_rng(random_state) 
-    grupos_teste = rng.choice(grupos_unicos, size=n_teste, replace=False)
-    mascara_teste = np.isin(groups, grupos_teste)
+    test_groups = rng.choice(unique_groups, size=n_test, replace=False)
+    test_mask = np.isin(groups, test_groups)
 
-    X_train, X_test = X[~mascara_teste], X[mascara_teste]
-    y_train, y_test = y[~mascara_teste], y[mascara_teste]
+    X_train, X_test = X[~test_mask], X[test_mask]
+    y_train, y_test = y[~test_mask], y[test_mask]
 
     print(f"treino: {len(X_train)} linhas, "
-          f"{len(np.unique(groups[~mascara_teste]))} registros, "
+          f"{len(np.unique(groups[~test_mask]))} registros, "
           f"classes {np.bincount(y_train, minlength=3)}")
     print(f"teste:  {len(X_test)} linhas, "
-          f"{len(np.unique(groups[mascara_teste]))} registros, "
+          f"{len(np.unique(groups[test_mask]))} registros, "
           f"classes {np.bincount(y_test, minlength=3)}")
 
     return X_train, X_test, y_train, y_test

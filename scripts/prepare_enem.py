@@ -2,9 +2,11 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from statstech.preprocessing import OneHotEncoder
+from statstech.decomposition import PCA
+from statstech.model_selection import train_test_split
+from statstech.preprocessing import OneHotEncoder, SimpleImputer, StandardScaler
 
-from analysis.config import ENEM_SAMPLE_SIZE, PROCESSED, RAW, SEED
+from analysis.config import ENEM_SAMPLE_SIZE, PROCESSED, RAW, SEED, TEST_SIZE
 from analysis.enem_codes import (
     ASSET_COLUMNS,
     ASSET_LEVELS,
@@ -223,6 +225,54 @@ def encode_enem(
 
     X = np.column_stack(list(features.values()))
     return X, y, list(features)
+
+
+def add_asset_index(
+    X_train: np.ndarray,
+    X_test: np.ndarray,
+    cols: list[int],
+    n_components: int = 1,
+) -> tuple[np.ndarray, np.ndarray, StandardScaler, PCA]:
+    """
+    Troca as colunas de bens por um índice de bens calculado com PCA.
+
+    Parameters
+    ----------
+    X_train : np.ndarray
+        Entradas de treino, sem NaN.
+    X_test : np.ndarray
+        Entradas de teste, sem NaN.
+    cols : list[int]
+        Posições das colunas de bens em X_train e X_test.
+    n_components : int, default=1
+        Número de componentes do índice.
+
+    Returns
+    -------
+    X_train : np.ndarray
+        Treino sem as colunas de bens e com as componentes no fim.
+    X_test : np.ndarray
+        Teste sem as colunas de bens e com as componentes no fim.
+    scaler : StandardScaler
+        Padronizador ajustado nas colunas de bens do treino.
+    pca : PCA
+        PCA ajustado nas colunas de bens padronizadas do treino.
+
+    Notes
+    -----
+    O padronizador e o PCA aprendem só com o treino; o teste apenas é
+    transformado. Assim o teste não influencia o índice.
+    """
+    scaler = StandardScaler().fit(X_train[:, cols])
+    pca = PCA(n_components=n_components).fit(scaler.transform(X_train[:, cols]))
+
+    keep = [i for i in range(X_train.shape[1]) if i not in cols]
+    train_index = pca.transform(scaler.transform(X_train[:, cols]))
+    test_index = pca.transform(scaler.transform(X_test[:, cols]))
+
+    X_train_new = np.column_stack([X_train[:, keep], train_index])
+    X_test_new = np.column_stack([X_test[:, keep], test_index])
+    return X_train_new, X_test_new, scaler, pca
 
 
 if __name__ == "__main__":

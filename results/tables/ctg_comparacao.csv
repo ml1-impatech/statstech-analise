@@ -1,0 +1,8 @@
+model,hyperparameter,f1_macro,f1_macro_std,pathological_recall,pathological_recall_std
+Referência (majoritária),-,0.2914,0.0,0.0,0.0
+Logística,alpha=10,0.7795,0.0994,0.7176,0.2837
+LDA,reg_param=1e-06,0.7149,0.0921,0.578,0.321
+QDA,reg_param=0.5,0.733,0.1184,0.5425,0.3081
+KNN,n_neighbors=15,0.723,0.0672,0.5793,0.2584
+LDA (log),reg_param=1e-06,0.7224,0.114,0.5556,0.3274
+QDA (log),reg_param=0.7,0.7319,0.1214,0.5546,0.3256

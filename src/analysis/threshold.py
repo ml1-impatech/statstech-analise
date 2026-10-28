@@ -100,6 +100,33 @@ def threshold_curve(proba: ArrayLike, y: ArrayLike, positive: int | str,
 
 def choose_threshold(proba: ArrayLike, y: ArrayLike, positive: int | str, 
                     min_recall: float = 0.9) -> float:
+    """Escolhe o maior limiar que garante um recall mínimo de positive.
+ 
+    Testa os limiares 0.05, 0.06, ..., 0.95 e devolve o maior com recall
+    de pelo menos min_recall. O maior preserva o máximo de precisão.
+ 
+    Parameters
+    ----------
+    proba : array-like de formato (n_amostras, n_classes)
+        Probabilidades fora da amostra de cada classe, com as colunas na
+        ordem das classes ordenadas de y.
+    y : array-like de formato (n_amostras,)
+        Classes verdadeiras.
+    positive : int ou str
+        Classe de interesse.
+    min_recall : float, default=0.9
+        Recall mínimo exigido para positive.
+ 
+    Returns
+    -------
+    threshold : float
+        Maior limiar com recall de pelo menos min_recall.
+ 
+    Raises
+    ------
+    ValueError
+        Se nenhum limiar atingir min_recall.
+    """
     thresholds = np.round(np.linspace(0.05, 0.95, 91), 2)
     recall, precision = threshold_curve(proba, y, positive, thresholds)
     max_t = 0

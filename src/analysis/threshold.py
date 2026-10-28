@@ -11,6 +11,34 @@ from numpy.typing import ArrayLike
 
 def predict_with_threshold(proba: ArrayLike, classes: ArrayLike, 
                            positive: int | str, threshold: float) -> np.ndarray:
+    """Prevê a classe mais provável, trocada por positive acima do limiar.
+ 
+    O limiar só acrescenta previsões de positive, onde positive já é a
+    classe mais provável, ela é mantida mesmo com probabilidade abaixo
+    de threshold.
+ 
+    Parameters
+    ----------
+    proba : array-like de formato (n_amostras, n_classes)
+        Probabilidade de cada classe, com as colunas na ordem de classes.
+    classes : array-like de formato (n_classes,)
+        Rótulos das classes, na ordem das colunas de proba.
+    positive : int ou str
+        Classe de interesse (na CTG, 2 = patológico).
+    threshold : float
+        Limiar: onde proba de positive for maior ou igual a ele, a
+        previsão é positive.
+ 
+    Returns
+    -------
+    pred : ndarray de formato (n_amostras,)
+        Classe prevista para cada amostra.
+ 
+    Raises
+    ------
+    ValueError
+        Se positive não estiver em classes.
+    """
     classes = np.asarray(classes)
     proba = np.asarray(proba)
     positive_idx = np.flatnonzero(classes == positive)

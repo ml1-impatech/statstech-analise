@@ -1,6 +1,16 @@
-import numpy as np
+"""Previsão com limiar para uma classe de interesse.
+ 
+Em vez de prever sempre a classe mais provável, marca a classe positiva
+(na CTG, o patológico) sempre que a probabilidade dela passa de um
+limiar. O limiar é escolhido no treino, por validação cruzada, para
+garantir um recall mínimo.
+"""
 
-def predict_with_threshold(proba, classes, positive, threshold):
+import numpy as np
+from numpy.typing import ArrayLike
+
+def predict_with_threshold(proba: ArrayLike, classes: ArrayLike, 
+                           positive: int | str, threshold: float) -> np.ndarray:
     classes = np.asarray(classes)
     proba = np.asarray(proba)
     positive_idx = np.flatnonzero(classes == positive)
@@ -11,7 +21,8 @@ def predict_with_threshold(proba, classes, positive, threshold):
     pred = np.where(proba[:, positive_idx] >= threshold, positive, base_pred)
     return pred
 
-def threshold_curve(proba, y, positive, thresholds):
+def threshold_curve(proba: ArrayLike, y: ArrayLike, positive: int | str, 
+                    thresholds: ArrayLike) -> tuple[np.ndarray, np.ndarray]:
     y = np.asarray(y)
     proba = np.asarray(proba)
     classes = np.unique(y)
@@ -29,7 +40,8 @@ def threshold_curve(proba, y, positive, thresholds):
             precision[i] = np.nan
     return recall, precision
 
-def choose_threshold(proba, y, positive, min_recall=0.9):
+def choose_threshold(proba: ArrayLike, y: ArrayLike, positive: int | str, 
+                    min_recall: float = 0.9) -> float:
     thresholds = np.round(np.linspace(0.05, 0.95, 91), 2)
     recall, precision = threshold_curve(proba, y, positive, thresholds)
     max_t = 0

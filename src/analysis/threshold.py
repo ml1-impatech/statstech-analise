@@ -15,6 +15,9 @@ def threshold_curve(proba, y, positive, thresholds):
     y = np.asarray(y)
     proba = np.asarray(proba)
     classes = np.unique(y)
+    if proba.shape[1] != len(classes):
+        raise ValueError("o número de classes em y é diferente do "
+                        "número de colunas de proba")
     recall = np.empty(len(thresholds))
     precision = np.empty(len(thresholds))
     for i, t in enumerate(thresholds):

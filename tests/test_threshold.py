@@ -37,3 +37,25 @@ def test_predict_with_threshold_string_labels():
 def test_positive_not_in_classes():
     with pytest.raises(ValueError, match="positive"):
         predict_with_threshold(PROBA, CLASSES, 5, 0.5)
+
+# testes de threshold_curve 
+ 
+@pytest.mark.parametrize(
+    "t, recall, precision",
+    [
+        (0.9, 1 / 3, 1.0),  # só a linha 3 (argmax)
+        (0.4, 2 / 3, 1.0),  # linhas 3 e 4
+        (0.3, 2 / 3, 2 / 3),  # linhas 1, 3 e 4
+        (0.2, 1.0, 3 / 5),  # linhas 1, 2, 3, 4 e 5
+    ],
+)
+def test_threshold_curve_hand_example(t, recall, precision):
+    r, p = threshold_curve(PROBA, Y, 2, [t])
+    np.testing.assert_allclose(r, [recall])
+    np.testing.assert_allclose(p, [precision])
+ 
+def test_precision_nan_when_nothing_predicted_positive():
+    proba = np.array([[0.7, 0.2, 0.1], [0.2, 0.7, 0.1], [0.6, 0.1, 0.3]])
+    r, p = threshold_curve(proba, [0, 1, 2], 2, [0.5])
+    np.testing.assert_allclose(r, [0.0])
+    assert np.isnan(p[0])

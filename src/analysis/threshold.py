@@ -51,6 +51,36 @@ def predict_with_threshold(proba: ArrayLike, classes: ArrayLike,
 
 def threshold_curve(proba: ArrayLike, y: ArrayLike, positive: int | str, 
                     thresholds: ArrayLike) -> tuple[np.ndarray, np.ndarray]:
+    """Calcula o recall e a precisão de positive para cada limiar.
+ 
+    As colunas de proba devem seguir a ordem das classes ordenadas de y,
+    como no cross_val_predict com method="predict_proba".
+ 
+    Parameters
+    ----------
+    proba : array-like de formato (n_amostras, n_classes)
+        Probabilidades fora da amostra de cada classe.
+    y : array-like de formato (n_amostras,)
+        Classes verdadeiras.
+    positive : int ou str
+        Classe de interesse.
+    thresholds : array-like de formato (n_limiares,)
+        Limiares a avaliar.
+ 
+    Returns
+    -------
+    recall : ndarray de formato (n_limiares,)
+        Fração das amostras de positive previstas como positive.
+    precision : ndarray de formato (n_limiares,)
+        Fração das previsões de positive que são positive de verdade.
+        Vale NaN quando nenhuma amostra é prevista como positive.
+ 
+    Raises
+    ------
+    ValueError
+        Se o número de colunas de proba for diferente do número de
+        classes em y.
+    """
     y = np.asarray(y)
     proba = np.asarray(proba)
     classes = np.unique(y)

@@ -26,7 +26,14 @@ def test_predict_with_threshold_hand_example():
     pred = predict_with_threshold(PROBA, CLASSES, 2, 0.3)
     np.testing.assert_array_equal(pred, [0, 2, 1, 2, 2, 0])
  
- 
 def test_threshold_only_adds_positive():
     pred = predict_with_threshold([[0.30, 0.25, 0.45]], CLASSES, 2, 0.6)
     np.testing.assert_array_equal(pred, [2])
+
+def test_predict_with_threshold_string_labels():
+    pred = predict_with_threshold(PROBA, ["n", "s", "p"], "p", 0.3)
+    np.testing.assert_array_equal(pred, ["n", "p", "s", "p", "p", "n"])
+ 
+def test_positive_not_in_classes():
+    with pytest.raises(ValueError, match="positive"):
+        predict_with_threshold(PROBA, CLASSES, 5, 0.5)

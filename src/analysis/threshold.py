@@ -11,15 +11,29 @@ def predict_with_threshold(proba, classes, positive, threshold):
     pred = np.where(proba[:, positive_idx] >= threshold, positive, base_pred)
     return pred
 
-def choose_threshold(proba, y, positive, min_recall=0.9):
+def threshold_curve(proba, y, positive, thresholds):
+    y = np.asarray(y)
+    proba = np.asarray(proba)
     classes = np.unique(y)
-    grades = np.linspace(0.05, 0.95, 91)
-    max_t = 0
-    for t in grades:
+    recall = np.empty(len(thresholds))
+    precision = np.empty(len(thresholds))
+    for i, t in enumerate(thresholds):
         pred = predict_with_threshold(proba, classes, positive, t)
-        recall = np.mean(pred[y == positive] == positive)
-        if t > max_t and recall >= min_recall:
+        recall[i] = np.mean(pred[y == positive] == positive)
+        if np.any(pred == positive):
+            precision[i] = np.mean(y[pred == positive] == positive)
+        else:
+            precision[i] = np.nan
+    return recall, precision
+
+def choose_threshold(proba, y, positive, min_recall=0.9):
+    thresholds = np.round(np.linspace(0.05, 0.95, 91), 2)
+    recall, precision = threshold_curve(proba, y, positive, thresholds)
+    max_t = 0
+    for t, r in zip(thresholds, recall):
+        if r >= min_recall:
             max_t = t
     if max_t == 0:
-        raise ValueError("Nenhum t atinge o recall pedido")
+        raise ValueError(f"O recall pedido foi {min_recall}, o máximo "
+            f"encontrado foi {recall.max():.3f}")
     return max_t

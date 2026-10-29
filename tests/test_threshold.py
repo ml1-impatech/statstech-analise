@@ -63,6 +63,10 @@ def test_precision_nan_when_nothing_predicted_positive():
 def test_threshold_curve_wrong_number_of_columns():
     with pytest.raises(ValueError, match="colunas"):
         threshold_curve(PROBA[:, :2], Y, 2, [0.5])
+
+def test_recall_never_increases_with_threshold():
+    r, _ = threshold_curve(PROBA, Y, 2, np.linspace(0.05, 0.95, 91))
+    assert np.all(np.diff(r) <= 0)
  
 # testes de choose_threshold
  
@@ -70,3 +74,8 @@ def test_threshold_curve_wrong_number_of_columns():
 def test_choose_threshold_hand_example(min_recall, expected):
     t = choose_threshold(PROBA, Y, 2, min_recall=min_recall)
     np.testing.assert_allclose(t, expected)
+
+def test_choose_threshold_impossible_recall():
+    proba = np.vstack([PROBA[:5], [[0.90, 0.09, 0.01]]])
+    with pytest.raises(ValueError, match="recall"):
+        choose_threshold(proba, Y, 2, min_recall=1.0)

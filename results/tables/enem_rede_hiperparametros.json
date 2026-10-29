@@ -1,0 +1,15 @@
+{
+  "seed": 72,
+  "fixed": {
+    "model__batch_size": 64,
+    "model__scale_y": true
+  },
+  "params": {
+    "model__hidden_layer_sizes": [
+      32
+    ],
+    "model__learning_rate": 0.001,
+    "model__max_iter": 200
+  },
+  "rmse_cv": 72.62350713678211
+}

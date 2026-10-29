@@ -43,10 +43,10 @@ def test_positive_not_in_classes():
 @pytest.mark.parametrize(
     "t, recall, precision",
     [
-        (0.9, 1 / 3, 1.0),  # só a linha 3 (argmax)
-        (0.4, 2 / 3, 1.0),  # linhas 3 e 4
-        (0.3, 2 / 3, 2 / 3),  # linhas 1, 3 e 4
-        (0.2, 1.0, 3 / 5),  # linhas 1, 2, 3, 4 e 5
+        (0.9, 1 / 3, 1.0),  # só o indice 3 (argmax)
+        (0.4, 2 / 3, 1.0),  # indices 3 e 4
+        (0.3, 2 / 3, 2 / 3),  # indices 1, 3 e 4
+        (0.2, 1.0, 3 / 5),  # indices 1, 2, 3, 4 e 5
     ],
 )
 def test_threshold_curve_hand_example(t, recall, precision):
@@ -79,3 +79,16 @@ def test_choose_threshold_impossible_recall():
     proba = np.vstack([PROBA[:5], [[0.90, 0.09, 0.01]]])
     with pytest.raises(ValueError, match="recall"):
         choose_threshold(proba, Y, 2, min_recall=1.0)
+
+def test_choose_threshold_every_t_works():
+    t = choose_threshold(PROBA, Y, 2, min_recall=0.3)
+    np.testing.assert_allclose(t, 0.95)
+
+@pytest.mark.parametrize("min_recall", [0.3, 0.6, 1.0])
+def test_choose_threshold_consistent(min_recall):
+    t = choose_threshold(PROBA, Y, 2, min_recall=min_recall)
+    pred = predict_with_threshold(PROBA, CLASSES, 2, t)
+    assert np.mean(pred[Y == 2] == 2) >= min_recall
+    if t < 0.95:
+        pred_next = predict_with_threshold(PROBA, CLASSES, 2, t + 0.01)
+        assert np.mean(pred_next[Y == 2] == 2) < min_recall

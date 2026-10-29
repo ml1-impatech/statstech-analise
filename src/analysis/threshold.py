@@ -136,10 +136,9 @@ def choose_threshold(
     ValueError
         Se nenhum limiar atingir min_recall.
     """
-    thresholds = np.round(THRESHOLDS)
-    recall, _ = threshold_curve(proba, y, positive, thresholds)
+    recall, _ = threshold_curve(proba, y, positive, THRESHOLDS)
     max_t = 0
-    for t, r in zip(thresholds, recall):
+    for t, r in zip(THRESHOLDS, recall):
         if r >= min_recall:
             max_t = t
     if max_t == 0:

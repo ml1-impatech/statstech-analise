@@ -10,6 +10,8 @@ import numpy as np
 from numpy.typing import ArrayLike
 
 
+THRESHOLDS = np.round(np.linspace(0.05, 0.95, 91), 2)
+
 def predict_with_threshold(
     proba: ArrayLike, classes: ArrayLike, positive: int | str, threshold: float
 ) -> np.ndarray:
@@ -134,8 +136,8 @@ def choose_threshold(
     ValueError
         Se nenhum limiar atingir min_recall.
     """
-    thresholds = np.round(np.linspace(0.05, 0.95, 91), 2)
-    recall, precision = threshold_curve(proba, y, positive, thresholds)
+    thresholds = np.round(THRESHOLDS)
+    recall, _ = threshold_curve(proba, y, positive, thresholds)
     max_t = 0
     for t, r in zip(thresholds, recall):
         if r >= min_recall:

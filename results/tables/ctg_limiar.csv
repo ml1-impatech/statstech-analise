@@ -1,0 +1,3 @@
+model,f1_macro,pathological_recall,pathological_precision
+sem limiar,0.7962,0.7347,0.8571
+limiar t = 0.11,0.7074,0.9184,0.5533

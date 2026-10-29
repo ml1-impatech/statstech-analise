@@ -59,3 +59,14 @@ def test_precision_nan_when_nothing_predicted_positive():
     r, p = threshold_curve(proba, [0, 1, 2], 2, [0.5])
     np.testing.assert_allclose(r, [0.0])
     assert np.isnan(p[0])
+
+def test_threshold_curve_wrong_number_of_columns():
+    with pytest.raises(ValueError, match="colunas"):
+        threshold_curve(PROBA[:, :2], Y, 2, [0.5])
+ 
+# testes de choose_threshold
+ 
+@pytest.mark.parametrize("min_recall, expected", [(1.0, 0.2), (0.6, 0.4)])
+def test_choose_threshold_hand_example(min_recall, expected):
+    t = choose_threshold(PROBA, Y, 2, min_recall=min_recall)
+    np.testing.assert_allclose(t, expected)

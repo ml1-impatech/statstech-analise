@@ -1,0 +1,7 @@
+model,accuracy,f1_macro,pathological_recall,pathological_precision,f1_macro_cv
+Referência (majoritária),0.7939,0.295,0.0,0.0,nan
+Logística,0.8914,0.7739,0.7407,0.6452,0.7795
+LDA,0.8524,0.7143,0.5926,0.6957,0.7149
+QDA,0.7967,0.6501,0.4815,0.4815,0.733
+KNN,0.8607,0.7252,0.7407,0.5263,0.723
+Logística com limiar 0.11,0.8189,0.6495,0.9259,0.3571,0.7795

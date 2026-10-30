@@ -1,0 +1,10 @@
+{
+  "seed": 72,
+  "model": "logistic",
+  "positive": 2,
+  "min_recall": 0.9,
+  "threshold": 0.11,
+  "recall_cv": 0.9183673469387755,
+  "precision_cv": 0.5532786885245902,
+  "cv": "StratifiedGroupKFold(10)"
+}

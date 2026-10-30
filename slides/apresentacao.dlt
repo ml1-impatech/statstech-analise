@@ -1,0 +1,71 @@
+<document theme-accent= "orange" lang="pt" type="presentation">
+  <title>ENEM e CTG com a StatsTech</title>
+
+  <progress/>
+
+  <cover>
+    <title>ENEM e CTG com a StatsTech</title>
+    <subtitle>Trabalho de Aprendizado de Máquina I</subtitle>
+    <author>Grupo StatsTech</author>
+    <affiliation>IMPA Tech</affiliation>
+    <date>Novembro de 2026</date>
+  </cover>
+  <slide><toc/></slide>
+
+  <section >
+    <title>Biblioteca contruída: StatsTech</title>
+    <slide>
+      <table id="tbl:modulos" max-height="600px">
+      <title>Módulos implementados</title>
+      <header>
+        <column>Módulo</column>
+        <column align="right">Métodos</column>
+      </header>
+      <row><column><c>linear_model</c></column><column align="right">Mínimos quadrados, Ridge, Lasso, regressão logística</column></row>
+      <row><column><c>neighbors</c></column><column align="right">KNN</column></row>
+      <row><column><c>discriminat_analysis</c></column><column align="right">LDA, QDA</column></row>
+      <row><column><c>tree</c></column><column align="right">Árvores de decisão (regressão e classificação)</column></row>
+      <row><column><c>neural_network</c></column><column align="right">Redes neurais (regressão)</column></row>
+      <row><column><c>decomposition</c></column><column align="right">PCA</column></row>
+      <row><column><c>cluster</c></column><column align="right">K-means</column></row>
+      <row><column><c>model_selection</c></column><column align="right">Divisão treino/teste, k-fold, LOOCV, bootstrap, busca de hiperparâmetros</column></row>
+      <row><column><c>metrics</c></column><column align="right">Métricas de regressão e de classificação</column></row>
+      <row><column><c>preprocessing</c></column><column align="right">	Padronização, codificação de categorias, imputação de valores faltantes, features polinomiais (para regressão polinomial)</column></row>
+      <row><column><c>pipeline</c></column><column align="right">Encadeamento de pré-processamento e modelo, reajustado em cada fold da validação cruzada</column></row>
+    </table>
+
+
+    </slide>
+    
+  </section>
+
+  <section>
+    <title>Problema de Regressão: ENEM 2023</title>
+    <slide>
+      <title>Base de dados: microdados do INEP</title>
+      <!-- figura: E5 -->
+      <box>
+      <strong>Quanto da nota de um participante é explicado pelo contexto socioeconômico e familiar?</strong>
+      </box>
+    <subsection>
+      <title>Resultados</title>
+      
+    </subsection>
+    </slide>
+  </section>
+
+  <section>
+    <title>Problema de classficação: Cardiotocografia (CTG) </title>
+    <slide>
+      <title>Base de dados: UC Irvine (Machine Learning Repository)</title>
+      <box>
+      <strong>É possível classificar a saúde de um feto em normal, suspeito e patológico dado certas medidas da CTG?</strong>
+      </box>
+    <subsection>
+      <title>Resultados</title>
+      
+    </subsection>
+    </slide>
+
+  </section>
+</document>

@@ -231,3 +231,7 @@ data/processed/*
 data/raw/enem/
 data/raw/*.zip
 data/raw/MICRODADOS_ENEM_*
+
+# Slides: o Delta instalado pelo npm e o HTML gerado
+node_modules/
+slides/*.html

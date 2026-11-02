@@ -35,7 +35,7 @@ de `src/analysis` em modo editável.
 
 **Localização do ZIP:** `data/raw/microdados_enem_2023.zip`
 
-**SHA-256:** `19512b7e29c9c8e94055439669722081341caa275c245a6c9d2d559c5d13a0a`
+**SHA-256:** `19512b7e29c9c8e940554396969722081341caa275c245a6c9d2d559c5d13a0a`
 
 O script `scripts/download_enem.py` baixa os microdados, verifica se as colunas `NU_NOTA_MT` e `Q006` estão presentes no mesmo CSV e extrai o arquivo de dados e o dicionário para `data/raw/enem/`.
 

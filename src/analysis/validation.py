@@ -109,7 +109,7 @@ class StratifiedGroupKFold:
             )
         
     def split(self, X: np.ndarray, y: np.ndarray | None = None):
-        """Gera os índices de treino e de validação dde cada fold.
+        """Gera os índices de treino e de validação de cada fold.
             
         Parameters
         ----------

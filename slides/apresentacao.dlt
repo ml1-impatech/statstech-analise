@@ -1,0 +1,185 @@
+<document theme-accent= "orange" lang="pt" type="presentation">
+  <title>ENEM e CTG com a StatsTech</title>
+
+  <progress/>
+
+  <cover>
+    <title>ENEM e CTG com a StatsTech</title>
+    <subtitle>Trabalho de Aprendizado de Máquina I</subtitle>
+    <author>Grupo StatsTech</author>
+    <affiliation>IMPA Tech</affiliation>
+    <date>Novembro de 2026</date>
+  </cover>
+  <slide><toc/></slide>
+
+  <section >
+    <title>Biblioteca contruída: StatsTech</title>
+    <slide>
+      <table id="tbl:modulos" max-height="600px">
+      <title>Módulos implementados</title>
+      <header>
+        <column>Módulo</column>
+        <column align="right">Métodos</column>
+      </header>
+      <row><column><c>linear_model</c></column><column align="right">Mínimos quadrados, Ridge, Lasso, regressão logística</column></row>
+      <row><column><c>neighbors</c></column><column align="right">KNN</column></row>
+      <row><column><c>discriminat_analysis</c></column><column align="right">LDA, QDA</column></row>
+      <row><column><c>tree</c></column><column align="right">Árvores de decisão (regressão e classificação)</column></row>
+      <row><column><c>neural_network</c></column><column align="right">Redes neurais (regressão)</column></row>
+      <row><column><c>decomposition</c></column><column align="right">PCA</column></row>
+      <row><column><c>cluster</c></column><column align="right">K-means</column></row>
+      <row><column><c>model_selection</c></column><column align="right">Divisão treino/teste, k-fold, LOOCV, bootstrap, busca de hiperparâmetros</column></row>
+      <row><column><c>metrics</c></column><column align="right">Métricas de regressão e de classificação</column></row>
+      <row><column><c>preprocessing</c></column><column align="right">	Padronização, codificação de categorias, imputação de valores faltantes, features polinomiais (para regressão polinomial)</column></row>
+      <row><column><c>pipeline</c></column><column align="right">Encadeamento de pré-processamento e modelo, reajustado em cada fold da validação cruzada</column></row>
+    </table>
+
+
+    </slide>
+    
+  </section>
+
+  <section>
+    <title>Problema de Regressão: ENEM 2023</title>
+    <slide>
+      <title>Quanto da nota de um participante é explicado pelo contexto socioeconômico e familiar?</title>
+      <!-- figura: E5 -->
+      <box>
+      <strong>Base de dados: microdados do INEP</strong>
+      <list>
+        <item>50 mil participantes de 2023, sorteados entre os concluintes do ensino médio, presentes nas provas e não faltantes;</item>
+        <item>Alvo: médias das 5 provas;</item>
+        <item>41 variáveis: renda per capita, escolaridade do pai e da mãe, tipo de escola, região, sexo, cor/raça, faixa etária e um índice de bens (PCA dos 19 itens do questionário);</item>
+        <item>Teste separado antes de imputar e de ajustar o PCA.</item>
+      </list>
+      </box>
+    </slide>
+    <slide>
+      <title>Histograma</title>
+      colocar e5.png
+    </slide>
+    <slide>
+      <title>Exploração da base</title>
+      <figure src="../results/figures/enem_perfis_kmeans.png">
+      </figure>
+    </slide>
+    <slide>
+      <title>Modelos Lineares</title>
+      colocar imagem enem_lasso_caminho.png
+    </slide>
+    <slide>
+      <title>Modelos Não Lineares</title>
+      <box>A rede neural empata com a Ridge: a relação quase aditiva</box>
+      <figure src="../results/figures/enem_rede_perda.png">
+        <list>
+          <item>Ridge: 72.9</item>
+          <item>Lasso:</item>
+          <item>Rede neural: 72.6</item>
+        </list>
+      </figure>
+    </slide>
+    <subsection>
+      <title>Resultados</title>
+      <slide>
+        <title>Não tem resultado ainda</title>
+      </slide>      
+    </subsection>
+  </section>
+
+  <section>
+    <title>Problema de classficação: Cardiotocografia (CTG) </title>
+    <slide>
+      <title>Base de dados: UC Irvine (Machine Learning Repository)</title>
+      <box>
+      <strong>É possível classificar a saúde de um feto em normal, suspeito e patológico dado certas medidas da CTG?</strong>
+      <list>
+        <item>2114 exames de 352 gestantes (registros), com 20 medidas automáticas do aparelho;</item>
+        <item>Colunas removidas: classificação dos especialistas (entregariam a resposta);</item>
+        <item>Treino e teste separados por registro: 282 registros no treino e 70 no teste.</item>
+      </list>
+      </box>
+    </slide>
+
+    <slide>
+      <title>Algum titulo</title>
+        <figure src="../results/figures/ctg_classes.png">
+        </figure>
+    </slide>
+
+    <slide>
+      <title>Por que dividir por registro?</title>
+      <list>
+        <item>KNN com folds por exame: o melhor é k=1, com F1=0.834;</item>
+        <item>Com folds por registro: o melhor é k=15, com F1=0.723;</item>
+        <item>Com k=1, o vizinho mais próximo é outro exame da mesma gestante, que estava no treino.</item>
+      </list>
+      <figure src="../results/figures/ctg_loocv_kfold.png"></figure>
+    </slide>
+
+    <slide>
+      <title>Baixar o limiar para 0.11 troca precisão por recall</title>
+      <list>
+        <item>Deixar passar um patológico é pior que um alarme falso;</item>
+        <item>Escolhemos o maior limiar com recall $ \geq 0.9 $ na validação cruzada</item>
+      </list>
+      <figure src="../results/figures/ctg_limiar.png"></figure>
+    </slide>
+    <subsection>
+      <title>Resultados</title>
+      <slide>
+        <title>No teste, o modelo deixa passar 2 dos 27 patológicos</title>
+        <list>
+          <item>Recall do patológico: 0,74 sem limiar e 0,93 com limiar (IC 95%: 0,82 a 1,00);</item>
+          <item>Precisão: 0,36. A maioria dos alarmes falsos vem da classe “suspeito”;</item>
+          <item>AUC do patológico: 0,97;</item>
+          <item>O F1 macro no teste (0,77) bate com o da validação cruzada (0,78).</item>
+        </list>
+      </slide>
+
+      <slide>
+        <figure src="../results/figures/ctg_confusao.png"></figure>
+      </slide>
+    </subsection>
+  </section>
+  <section>
+    <title>Melhorias e Lacunas na Biblioteca</title>
+    <slide>
+      <title>A análise apontou lacunas</title>
+      Os seguintes métodos foram implementados depois, por exigência das bases:
+
+    <table id="tbl:adicionados" max-height="600px">
+      <title>Implementado na statstech durante a análise</title>
+      <header>
+        <column>O que entrou</column>
+        <column align="right">Por quê</column>
+      </header>
+      <row><column><c>Pipeline</c></column><column align="right">Reajustar a padronização dentro de cada fold, sem vazamento</column></row>
+      <row><column><c>StandardScaler(columns=...)</c></column><column align="right">Padronizar só as variáveis contínuas e deixar as dummies 0/1 do ENEM intactas</column></row>
+      <row><column>KNN em blocos</column><column align="right">Com 40 mil × 10 mil exemplos do ENEM, a matriz de distâncias inteira passaria de 3 GB</column></row>
+      <row><column><c>MLPRegressor(scale_y=True)</c></column><column align="right">Com notas em centenas, o gradiente explodia; a rede também volta aos últimos pesos válidos</column></row>
+      <row><column><c>StratifiedKFold</c></column><column align="right">Manter os 8% de exames patológicos em cada fold</column></row>
+      <row><column><c>cross_val_predict</c></column><column align="right">Previsões da LOOCV e probabilidades para escolher o limiar</column></row>
+      <row><column><c>bootstrap_ci</c></column><column align="right">Intervalos de confiança das métricas no teste</column></row>
+      <row><column><c>GridSearchCV</c></column><column align="right">Combinações que falham não derrubam a busca, <c>predict_proba</c> para o limiar e desvio entre folds para as barras de erro</column></row>
+    </table>
+    </slide>
+
+    <slide>
+      <title>Pontos de Melhoria</title>
+      Além dos anteriores, outras modificações poderiam ser feitas, mas por questões de organização de tempo, foram implementadas na parte 2:
+      <table id="tbl:melhorias" max-height="600px">
+      <title>Implementado na análise, mas caberia na statstech</title>
+      <header>
+        <column>O que</column>
+        <column align="right">Onde está e o que exigiria</column>
+      </header>
+      <row><column>Validação por grupo</column><column align="right"><c>StratifiedGroupKFold</c>, <c>group_train_test_split</c> e a LOOCV por registro; o <c>GridSearchCV</c> precisaria repassar os grupos</column></row>
+      <row><column>Limiar de decisão</column><column align="right"><c>predict_with_threshold</c>, <c>threshold_curve</c> e <c>choose_threshold</c>, úteis para qualquer classe mais importante</column></row>
+      <row><column>Métricas por classe</column><column align="right"><c>evaluate_classifier</c>; o <c>scoring</c> só aceita médias, e o recall do patológico foi escrito à mão</column></row>
+      <row><column>Transformações no <c>Pipeline</c></column><column align="right">O <c>log1p</c> das medidas assimétricas da CTG foi feito por uma função no notebook</column></row>
+      <row><column>Rede neural</column><column align="right">Faltam o otimizador Adam, a regularização L2, a parada antecipada e uma rede para classificação</column></row>
+    </table>
+    </slide>
+  </section>
+  
+</document>

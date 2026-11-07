@@ -4,6 +4,7 @@ statstech @ git+https://github.com/ml1-impatech/statstech.git@379eeb68673d05a2af
 
 numpy>=1.26
 matplotlib>=3.8
+scikit-learn>=1.4
 
 pandas>=2.1
 xlrd>=2.0

@@ -9,7 +9,7 @@
       32
     ],
     "model__learning_rate": 0.001,
-    "model__max_iter": 200
+    "model__max_iter": 400
   },
-  "rmse_cv": 72.62350713678211
+  "rmse_cv": 72.66835592804883
 }

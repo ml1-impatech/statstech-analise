@@ -50,6 +50,7 @@
       </list>
       </box>
     </slide>
+
         <slide>
       <title>A desigualdade nos dados: escola e renda</title>
       <columns>
@@ -65,6 +66,7 @@
         <item>A nota sobe com a renda e com a escolaridade da mãe (nas rendas altas há poucos participantes, e as linhas oscilam).</item>
       </list>
     </slide>
+
         <slide>
       <title>Distribuição das notas</title>
       <columns>
@@ -77,32 +79,38 @@
       </columns>
       <list>
         <item>Notas concentradas em torno de 550 pontos, com desvio de cerca de 88.</item>
-        <item>Índice de bens × nota: correlação de 0,41, moderada.</item>
+        <item>Índice de bens (resume 19 itens da casa, como carro, computador e internet; quanto maior, mais bens) × nota: correlação de 0,41, moderada.</item>
       </list>
     </slide>
+
     <slide>
       <title>Perfis socioeconômicos (K-means)</title>
       <figure src="../results/figures/enem_perfis_kmeans.png">
       </figure>
     </slide>
+
+    <subsection>
+      <title>Resultados</title>
     <slide>
       <title>Modelos e validação cruzada</title>
       <columns>
         <column width="3">
         <table id="tbl:enem-cv">
-          <title>RMSE na validação cruzada (KFold 5, treino)</title>
-          <header>
-            <column>Modelo</column>
-            <column align="right">RMSE (pontos)</column>
-          </header>
-          <row><column>Prever a média</column><column align="right">87,7</column></row>
-          <row><column>Linear / Ridge (escalas ordinais)</column><column align="right">72,9</column></row>
-          <row><column>Ridge (one-hot)</column><column align="right">72,5</column></row>
-          <row><column>Ridge polinomial</column><column align="right">72,5</column></row>
-          <row><column>Lasso</column><column align="right">72,9</column></row>
-          <row><column>KNN (k = 121)</column><column align="right">74,4</column></row>
-          <row><column>Rede neural (3 sementes)</column><column align="right">72,7</column></row>
-        </table>
+        <title>RMSE na validação cruzada (KFold 5, treino)</title>
+        <header>
+          <column>Modelo</column>
+          <column>Hiperparâmetros escolhidos</column>
+          <column align="right">RMSE (pontos)</column>
+        </header>
+        <row><column>Prever a média</column><column>—</column><column align="right">87,7</column></row>
+        <row><column>Linear</column><column>—</column><column align="right">72,9</column></row>
+        <row><column>Ridge (escalas ordinais)</column><column>$\alpha \approx 0{,}32$</column><column align="right">72,9</column></row>
+        <row><column>Ridge (one-hot)</column><column>$\alpha \approx 0{,}32$</column><column align="right">72,5</column></row>
+        <row><column>Ridge polinomial</column><column>$\alpha \approx 0{,}32$</column><column align="right">72,5</column></row>
+        <row><column>Lasso</column><column>$\alpha \approx 0{,}0002$</column><column align="right">72,9</column></row>
+        <row><column>KNN</column><column>$k = 121$</column><column align="right">74,4</column></row>
+        <row><column>Rede neural (3 sementes)</column><column>32 neurônios, passo 0,001, 400 épocas</column><column align="right">72,7</column></row>
+      </table>
         </column>
         <column width="2">
         <list>
@@ -112,8 +120,7 @@
         </column>
       </columns>
     </slide>
-    <subsection>
-      <title>Resultados</title>
+
     <slide>
       <title>Resultado no teste</title>
       <columns>
@@ -128,6 +135,7 @@
         </column>
       </columns>
     </slide>
+
     <slide>
     <title>O que está associado à nota</title>
     <list>
@@ -137,15 +145,17 @@
       <item>O Lasso manteve as 41 variáveis: todas ajudam um pouco a prever.</item>
     </list>
     </slide>
+
     <slide>
     <title>Caminho do Lasso: a ordem em que os coeficientes zerariam</title>
     <figure src="../results/figures/enem_lasso_caminho.png" alt="Caminho dos coeficientes do Lasso" id="fig:enem-lasso"/>
     </slide>  
+
     <slide>
       <title>Discussão: ENEM</title>
       <list>
-        <item><strong>Melhor desempenho:</strong> Ridge com one-hot e rede neural, empatados no teste.</item>
-        <item><strong>Problemas:</strong> o KNN sofre com variáveis discretas; a rede custa minutos por ajuste e depende da semente; o arquivo do INEP é grande e o download falhou várias vezes.</item>
+        <item><strong>Melhor desempenho:</strong> Ridge com one-hot, escolhida pela validação cruzada (RMSE 72,5) e confirmada no teste (72,3). A rede empata com ela no teste;</item>
+        <item><strong>Problemas:</strong> o KNN sofre com variáveis discretas; a rede custa minutos por ajuste e depende da semente;</item>
         <item><strong>Qual usaríamos:</strong> a Ridge com one-hot. Erra o mesmo que a rede, ajusta em segundos e cada coeficiente se lê em pontos.</item>
       </list>
     </slide>
@@ -179,7 +189,7 @@
     <slide>
       <title>Base de dados: UC Irvine (Machine Learning Repository)</title>
       <box>
-      <strong>É possível classificar a saúde de um feto em normal, suspeito e patológico dado certas medidas da CTG?</strong>
+      <strong>As medidas automáticas da cardiotocografia bastam para separar exames normais, suspeitos e patológicos?</strong>
       <list>
         <item>2114 exames de 352 gestantes (registros), com 20 medidas automáticas do aparelho;</item>
         <item>Colunas removidas: classificação dos especialistas (entregariam a resposta);</item>
@@ -198,10 +208,10 @@
       <figure src="../results/figures/ctg_pca_2d.png" alt="PCA 2D das medidas do treino" id="fig:ctg-pca"/>
     </slide>  
 
-
     <slide>
       <title>Comparação dos modelos</title>
       <figure src="../results/figures/ctg_comparacao.png" alt="F1 macro e recall do patológico por modelo" id="fig:ctg-comparacao"/>
+      Hiperparâmetros escolhidos por validação cruzada: logística com $\alpha = 10$; LDA com regularização $10^{-6}$; QDA com regularização $0{,}5$; KNN com $k = 15$.
     </slide>
 
     <slide>
@@ -255,7 +265,7 @@
       <list>
         <item><strong>Melhor desempenho:</strong> regressão logística, com o maior F1 macro na validação cruzada (0,78) e no teste (0,77).</item>
         <item><strong>Problemas:</strong> vários exames por gestante (era preciso validar por registro); só 8% de patológicos; a classe suspeito é a mais difícil.</item>
-        <item><strong>Qual usaríamos:</strong> a logística com limiar 0,11. Deixa passar 2 dos 27 patológicos, ao custo de mais alarmes falsos.</item>
+        <item><strong>Qual usaríamos:</strong> a logística ($\alpha = 10$) com limiar 0,11. Deixa passar 2 dos 27 patológicos, ao custo de mais alarmes falsos.</item>
       </list>
     </slide>
   </subsection>
@@ -376,6 +386,30 @@
         <item>O estado do bebê muda ao longo do monitoramento: 88 das 352 gestantes têm trechos de classes diferentes.</item>
         <item>Das 50 gestantes com algum trecho patológico, só 15 têm todos os trechos patológicos. Por isso não dava para estratificar o teste por gestante.</item>
       </list>
+    </slide>
+
+        <slide>
+      <title>O índice de bens</title>
+      <columns>
+        <column>
+          <strong>Os 19 itens do questionário</strong>
+          <list>
+            <item>Banheiros, quartos, carros, motos</item>
+            <item>Eletrodomésticos: geladeira, freezer, máquina de lavar, secadora, micro-ondas, lava-louças, aspirador</item>
+            <item>TV, DVD, TV por assinatura, celular, telefone fixo, computador, internet</item>
+            <item>Empregado(a) doméstico(a)</item>
+          </list>
+        </column>
+        <column>
+          <strong>Como virou um número só</strong>
+          <list>
+            <item>Cada item vira uma escala de 0 (não tem) a 4 (quatro ou mais).</item>
+            <item>Os itens andam juntos (quem tem carro tende a ter computador), então a 1ª componente do PCA resume os 19 em um número.</item>
+            <item>PCA ajustado só no treino.</item>
+            <item>Quanto maior o índice, mais bens na casa.</item>
+          </list>
+        </column>
+      </columns>
     </slide>
 
     <slide>

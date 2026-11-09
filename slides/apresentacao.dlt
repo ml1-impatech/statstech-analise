@@ -1,4 +1,4 @@
-<document theme-accent= "orange" lang="pt" type="presentation">
+<document theme="estilo.css" theme-accent= "orange" lang="pt" type="presentation">
   <title>ENEM e CTG com a StatsTech</title>
 
   <progress/>
@@ -12,31 +12,28 @@
   </cover>
   <slide><toc/></slide>
 
-  <section >
-    <title>Biblioteca contruída: StatsTech</title>
+  <section>
+    <title>Biblioteca construída: StatsTech</title>
     <slide>
-      <table id="tbl:modulos" max-height="600px">
-      <title>Módulos implementados</title>
-      <header>
-        <column>Módulo</column>
-        <column align="right">Métodos</column>
-      </header>
-      <row><column><c>linear_model</c></column><column align="right">Mínimos quadrados, Ridge, Lasso, regressão logística</column></row>
-      <row><column><c>neighbors</c></column><column align="right">KNN</column></row>
-      <row><column><c>discriminat_analysis</c></column><column align="right">LDA, QDA</column></row>
-      <row><column><c>tree</c></column><column align="right">Árvores de decisão (regressão e classificação)</column></row>
-      <row><column><c>neural_network</c></column><column align="right">Redes neurais (regressão)</column></row>
-      <row><column><c>decomposition</c></column><column align="right">PCA</column></row>
-      <row><column><c>cluster</c></column><column align="right">K-means</column></row>
-      <row><column><c>model_selection</c></column><column align="right">Divisão treino/teste, k-fold, LOOCV, bootstrap, busca de hiperparâmetros</column></row>
-      <row><column><c>metrics</c></column><column align="right">Métricas de regressão e de classificação</column></row>
-      <row><column><c>preprocessing</c></column><column align="right">	Padronização, codificação de categorias, imputação de valores faltantes, features polinomiais (para regressão polinomial)</column></row>
-      <row><column><c>pipeline</c></column><column align="right">Encadeamento de pré-processamento e modelo, reajustado em cada fold da validação cruzada</column></row>
-    </table>
-
-
+      <title>Módulos da statstech usados em cada base</title>
+      <table id="tbl:modulo-base" max-height="600px">
+        <header>
+          <column>Módulo</column>
+          <column>ENEM (regressão)</column>
+          <column>CTG (classificação)</column>
+        </header>
+        <row><column><c>linear_model</c></column><column>Linear, Ridge, Lasso</column><column>Regressão logística</column></row>
+        <row><column><c>neighbors</c></column><column>KNN</column><column>KNN</column></row>
+        <row><column><c>discriminant_analysis</c></column><column>—</column><column>LDA, QDA</column></row>
+        <row><column><c>neural_network</c></column><column>Rede neural</column><column>—</column></row>
+        <row><column><c>decomposition</c></column><column>PCA: índice de bens</column><column>PCA: exploração em 2D</column></row>
+        <row><column><c>cluster</c></column><column>K-means: perfis socioeconômicos</column><column>K-means: exploração</column></row>
+        <row><column><c>preprocessing</c></column><column>Padronização, one-hot, imputação, polinomial</column><column>Padronização</column></row>
+        <row><column><c>pipeline</c></column><column>Sim</column><column>Sim</column></row>
+        <row><column><c>model_selection</c></column><column>K-fold, busca, bootstrap</column><column>K-fold estratificado, LOOCV, busca, bootstrap</column></row>
+        <row><column><c>metrics</c></column><column>RMSE, MAE, R²</column><column>F1, recall, precisão, AUC</column></row>
+      </table>
     </slide>
-    
   </section>
 
   <section>
@@ -47,7 +44,7 @@
       <box>
       <strong>Base de dados: microdados do INEP</strong>
       <list>
-        <item>50 mil participantes de 2023, sorteados entre os concluintes do ensino médio, presentes nas provas e não faltantes;</item>
+        <item>50 mil participantes de 2023, sorteados entre os concluintes do ensino médio, presentes nas provas e não treineiros (38.347 no treino, 9.587 no teste);</item>
         <item>Alvo: médias das 5 provas;</item>
         <item>41 variáveis: renda per capita, escolaridade do pai e da mãe, tipo de escola, região, sexo, cor/raça, faixa etária e um índice de bens (PCA dos 19 itens do questionário);</item>
         <item>Teste separado antes de imputar e de ajustar o PCA.</item>
@@ -55,39 +52,101 @@
       </box>
     </slide>
     <slide>
-      <title>Histograma</title>
-      colocar e5.png
-    </slide>
-    <slide>
-      <title>Exploração da base</title>
+      <title>Perfis socioeconômicos (K-means)</title>
       <figure src="../results/figures/enem_perfis_kmeans.png">
       </figure>
     </slide>
     <slide>
-      <title>Modelos Lineares</title>
-      colocar imagem enem_lasso_caminho.png
-    </slide>
-    <slide>
-      <title>Modelos Não Lineares</title>
-      <box>A rede neural empata com a Ridge: a relação quase aditiva</box>
-      <figure src="../results/figures/enem_rede_perda.png">
+      <title>Modelos e validação cruzada</title>
+      <columns>
+        <column width="3">
+        <table id="tbl:enem-cv">
+          <title>RMSE na validação cruzada (KFold 5, treino)</title>
+          <header>
+            <column>Modelo</column>
+            <column align="right">RMSE (pontos)</column>
+          </header>
+          <row><column>Prever a média</column><column align="right">87,7</column></row>
+          <row><column>Linear / Ridge (escalas ordinais)</column><column align="right">72,9</column></row>
+          <row><column>Ridge (one-hot)</column><column align="right">72,5</column></row>
+          <row><column>Ridge polinomial</column><column align="right">72,5</column></row>
+          <row><column>Lasso</column><column align="right">72,9</column></row>
+          <row><column>KNN (k = 121)</column><column align="right">74,4</column></row>
+          <row><column>Rede neural (3 sementes)</column><column align="right">72,7</column></row>
+        </table>
+        </column>
+        <column width="2">
         <list>
-          <item>Ridge: 72.9</item>
-          <item>Lasso:</item>
-          <item>Rede neural: 72.6</item>
+          <item>One-hot ganhou do ordinal nos 5 folds: alguma escala ordinal não é linear.</item>
+          <item>O KNN é o pior: com perfis discretos, muitos participantes ficam à mesma distância.</item>
         </list>
-      </figure>
+        </column>
+      </columns>
     </slide>
     <subsection>
       <title>Resultados</title>
-      <slide>
-        <title>Não tem resultado ainda</title>
-      </slide>      
-    </subsection>
+    <slide>
+      <title>Resultado no teste</title>
+      <columns>
+        <column width="3">
+          <figure src="../results/figures/enem_comparacao.png" alt="RMSE no teste com intervalo de 95%" id="fig:enem-teste"/>
+        </column>
+        <column width="2">
+          <list>
+            <item>Os modelos explicam cerca de um terço da variação das notas ($R^2 \approx 0{,}33$).</item>
+            <item>Rede − Ridge: 0,13 ponto de RMSE, IC 95% de −0,05 a 0,29. O intervalo inclui o zero.</item>
+          </list>
+        </column>
+      </columns>
+    </slide>
+    <slide>
+    <title>O que está associado à nota</title>
+    <list>
+      <item>Escola privada: <strong>+44 pontos</strong>, comparando pessoas com a mesma renda, região e família.</item>
+      <item>Concluir o ensino médio com 20 anos ou mais: cerca de 40 a 80 pontos a menos que quem conclui até os 17.</item>
+      <item>Não saber a escolaridade da mãe: −20 pontos.</item>
+      <item>O Lasso manteve as 41 variáveis: todas ajudam um pouco a prever.</item>
+    </list>
+    </slide>
+    <slide>
+    <title>Caminho do Lasso: a ordem em que os coeficientes zerariam</title>
+    <figure src="../results/figures/enem_lasso_caminho.png" alt="Caminho dos coeficientes do Lasso" id="fig:enem-lasso"/>
+    </slide>  
+    <slide>
+      <title>Discussão: ENEM</title>
+      <list>
+        <item><strong>Melhor desempenho:</strong> Ridge com one-hot e rede neural, empatados no teste.</item>
+        <item><strong>Problemas:</strong> o KNN sofre com variáveis discretas; a rede custa minutos por ajuste e depende da semente; o arquivo do INEP é grande e o download falhou várias vezes.</item>
+        <item><strong>Qual usaríamos:</strong> a Ridge com one-hot. Erra o mesmo que a rede, ajusta em segundos e cada coeficiente se lê em pontos.</item>
+      </list>
+    </slide>
+  </subsection>
   </section>
 
   <section>
-    <title>Problema de classficação: Cardiotocografia (CTG) </title>
+    <title>Problema de classificação: Cardiotocografia (CTG) </title>
+    <slide>
+    <title>O que é a cardiotocografia</title>
+    <box>
+      Exame feito no fim da gravidez: um sensor de ultrassom na barriga da mãe registra o
+      <strong>batimento cardíaco do bebê</strong>, e um sensor de pressão registra as
+      <strong>contrações do</strong> <strong> útero</strong>. Um software resume o traçado em medidas, e
+      três obstetras classificaram cada exame em normal, suspeito ou patológico.
+    </box>
+    <table id="tbl:ctg-medidas" max-height="600px">
+      <title>Algumas das 20 medidas</title>
+      <header>
+        <column>Medida</column>
+        <column>O que é</column>
+      </header>
+      <row><column><c>LB</c></column><column>Linha de base: frequência cardíaca média do bebê (normal entre 110 e 160 bpm)</column></row>
+      <row><column><c>AC</c></column><column>Acelerações do batimento, em geral quando o bebê se mexe (sinal de bem-estar)</column></row>
+      <row><column><c>UC</c></column><column>Contrações do útero</column></row>
+      <row><column><c>DL</c>, <c>DS</c>, <c>DP</c></column><column>Desacelerações leves, graves e prolongadas do batimento</column></row>
+      <row><column><c>ASTV</c>, <c>ALTV</c></column><column>Porcentagem do tempo com variabilidade anormal, de curto e de longo prazo</column></row>
+      <row><column><c>Mode</c>, <c>Mean</c>, <c>Variance</c></column><column>Moda, média e variância do histograma dos batimentos</column></row>
+    </table>
+  </slide>
     <slide>
       <title>Base de dados: UC Irvine (Machine Learning Repository)</title>
       <box>
@@ -101,26 +160,42 @@
     </slide>
 
     <slide>
-      <title>Algum titulo</title>
+      <title>Três classes desbalanceadas: 78% dos exames são normais</title>
         <figure src="../results/figures/ctg_classes.png">
         </figure>
+    </slide>
+    <slide>
+      <title>Exploração: PCA das 20 medidas</title>
+      <figure src="../results/figures/ctg_pca_2d.png" alt="PCA 2D das medidas do treino" id="fig:ctg-pca"/>
+    </slide>  
+
+
+    <slide>
+      <title>Comparação dos modelos</title>
+      <figure src="../results/figures/ctg_comparacao.png" alt="F1 macro e recall do patológico por modelo" id="fig:ctg-comparacao"/>
     </slide>
 
     <slide>
       <title>Por que dividir por registro?</title>
-      <list>
-        <item>KNN com folds por exame: o melhor é k=1, com F1=0.834;</item>
-        <item>Com folds por registro: o melhor é k=15, com F1=0.723;</item>
-        <item>Com k=1, o vizinho mais próximo é outro exame da mesma gestante, que estava no treino.</item>
-      </list>
-      <figure src="../results/figures/ctg_loocv_kfold.png"></figure>
+      <columns>
+        <column width="2">
+          <list>
+            <item>KNN com folds por exame: melhor k = 1, F1 = 0,834;</item>
+            <item>Com folds por registro: melhor k = 15, F1 = 0,723;</item>
+            <item>Com k = 1, o vizinho mais próximo é outro exame da mesma gestante.</item>
+          </list>
+        </column>
+        <column width="3">
+          <figure src="../results/figures/ctg_loocv_kfold.png"></figure>
+        </column>
+      </columns>
     </slide>
 
     <slide>
-      <title>Baixar o limiar para 0.11 troca precisão por recall</title>
+      <title>Baixar o limiar para 0,11 troca precisão por recall</title>
       <list>
         <item>Deixar passar um patológico é pior que um alarme falso;</item>
-        <item>Escolhemos o maior limiar com recall $ \geq 0.9 $ na validação cruzada</item>
+        <item>Escolhemos o maior limiar com recall $\geq 0{,}9$ na validação cruzada</item>
       </list>
       <figure src="../results/figures/ctg_limiar.png"></figure>
     </slide>
@@ -137,12 +212,51 @@
       </slide>
 
       <slide>
+        <title>Matriz de confusão no teste (logística com limiar 0,11)</title>
         <figure src="../results/figures/ctg_confusao.png"></figure>
       </slide>
-    </subsection>
+
+      <slide>
+        <title>As medidas que mais pesam</title>
+        <figure src="../results/figures/ctg_coeficientes.png" alt="Efeito de cada medida na chance de patológico" id="fig:ctg-coef"/>
+      </slide>
+
+      <slide>
+      <title>Discussão: CTG</title>
+      <list>
+        <item><strong>Melhor desempenho:</strong> regressão logística, com o maior F1 macro na validação cruzada (0,78) e no teste (0,77).</item>
+        <item><strong>Problemas:</strong> vários exames por gestante (era preciso validar por registro); só 8% de patológicos; a classe suspeito é a mais difícil.</item>
+        <item><strong>Qual usaríamos:</strong> a logística com limiar 0,11. Deixa passar 2 dos 27 patológicos, ao custo de mais alarmes falsos.</item>
+      </list>
+    </slide>
+  </subsection>
+  </section>
+
+  <section>
+    <title>Conclusão</title>
+    <slide>
+      <title>Conclusão e limitações</title>
+      <list>
+        <item><strong>CTG (medidas contínuas):</strong> a forma de validar pesou mais que a escolha do modelo.</item>
+        <item><strong>ENEM (variáveis categóricas):</strong> modelos lineares bastam; a relação é quase aditiva.</item>
+        <item><strong>statstech × scikit-learn:</strong> nos mesmos dados e folds, os mesmos resultados (F1 idêntico no KNN e no LDA; rede a 0,2 ponto da do scikit-learn).</item>
+        <item><strong>Limitações:</strong> ENEM é associação, não causa, e só concluintes de 2023; CTG tem 352 gestantes de um único centro e só 27 patológicos no teste.</item>
+      </list>
+    </slide>  
+    <slide>
+      <title>Referências</title>
+      <list>
+        <item>INEP. <em>Microdados do Enem 2023</em>. Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira. Disponível em: <link to="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem">gov.br/inep</link>. Acesso em: 8 nov. 2026.</item>
+        <item>CAMPOS, D.; BERNARDES, J. <em>Cardiotocography</em> [conjunto de dados]. UCI Machine Learning Repository, 2000. DOI: <link to="https://doi.org/10.24432/C51S4N">10.24432/C51S4N</link>.</item>
+        <item>JAMES, G.; WITTEN, D.; HASTIE, T.; TIBSHIRANI, R.; TAYLOR, J. <em>An Introduction to Statistical Learning: with Applications in Python</em>. Springer, 2023. Disponível em: <link to="https://www.statlearning.com">statlearning.com</link>.</item>
+      </list>
+    </slide>
+      <slide divider="true">
+    <title>Obrigado!</title>
+  </slide>
   </section>
   <section>
-    <title>Melhorias e Lacunas na Biblioteca</title>
+    <title>Extras</title>
     <slide>
       <title>A análise apontou lacunas</title>
       Os seguintes métodos foram implementados depois, por exigência das bases:
@@ -177,9 +291,86 @@
       <row><column>Limiar de decisão</column><column align="right"><c>predict_with_threshold</c>, <c>threshold_curve</c> e <c>choose_threshold</c>, úteis para qualquer classe mais importante</column></row>
       <row><column>Métricas por classe</column><column align="right"><c>evaluate_classifier</c>; o <c>scoring</c> só aceita médias, e o recall do patológico foi escrito à mão</column></row>
       <row><column>Transformações no <c>Pipeline</c></column><column align="right">O <c>log1p</c> das medidas assimétricas da CTG foi feito por uma função no notebook</column></row>
-      <row><column>Rede neural</column><column align="right">Faltam o otimizador Adam, a regularização L2, a parada antecipada e uma rede para classificação</column></row>
+      <row><column>Pré-processamento por coluna</column><column align="right">Aplicar PCA e imputação só em algumas colunas dentro do <c>Pipeline</c> (como o <c>ColumnTransformer</c>); no ENEM eles ficaram fora da validação cruzada</column></row>
     </table>
     </slide>
+    <slide>
+      <title>statstech × scikit-learn nos mesmos dados</title>
+      <table id="tbl:sklearn">
+        <title>CTG: F1 macro na validação cruzada (mesmos 10 folds por registro)</title>
+        <header>
+          <column>Modelo</column>
+          <column align="right">statstech</column>
+          <column align="right">scikit-learn</column>
+        </header>
+        <row><column>KNN (k = 15)</column><column align="right">0,723</column><column align="right">0,723</column></row>
+        <row><column>LDA</column><column align="right">0,715</column><column align="right">0,715</column></row>
+        <row><column>QDA (melhor da grade)</column><column align="right">0,733</column><column align="right">0,728</column></row>
+        <row><column>Logística (melhor da grade)</column><column align="right">0,780</column><column align="right">0,777</column></row>
+      </table>
+      ENEM: rede da statstech com RMSE 72,6 na validação cruzada, contra 72,4 da rede do scikit-learn (com Adam e regularização).
+    </slide>
+
+    <slide>
+      <title>Como evitamos vazamento de dados</title>
+      <list>
+        <item>Teste separado antes de qualquer ajuste; na CTG, por gestante.</item>
+        <item>Padronização dentro do <c>Pipeline</c>, reajustada em cada fold.</item>
+        <item>Hiperparâmetros e limiar escolhidos só com validação cruzada no treino.</item>
+        <item>Teste aberto uma vez, com o commit anotado.</item>
+        <item>Ressalva: no ENEM, a imputação e o PCA foram ajustados no treino inteiro, fora dos folds. O teste continua limpo.</item>
+      </list>
+    </slide>
+
+    <slide>
+      <title>CTG: escolha dos hiperparâmetros</title>
+      <figure src="../results/figures/ctg_busca.png" alt="F1 macro contra cada hiperparâmetro" id="fig:ctg-busca"/>
+    </slide>
+
+    <slide>
+      <title>ENEM: número de épocas da rede</title>
+      <figure src="../results/figures/enem_rede_perda.png" alt="Perda no treino e RMSE na validação por época" id="fig:enem-epocas"/>
+    </slide>
+
+    <slide>
+      <title>ENEM: para quem o modelo erra mais</title>
+      <figure src="../results/figures/enem_rmse_grupo.png" alt="RMSE no teste por grupo" id="fig:enem-grupo"/>
+    </slide>
+
+    <slide>
+      <title>As métricas da CTG</title>
+      <list>
+        <item><strong>Recall:</strong> dos patológicos de verdade, quantos o modelo encontrou.</item>
+        <item><strong>Precisão:</strong> dos alarmes de patológico, quantos eram de verdade.</item>
+        <item><strong>F1 macro:</strong> média do F1 de cada classe; as classes raras pesam igual à normal.</item>
+        <item><strong>AUC:</strong> chance de um patológico receber risco maior que um não patológico.</item>
+        <item>Acurácia engana: dizer sempre "normal" acerta 79% e não encontra nenhum patológico.</item>
+      </list>
+    </slide>
+        <slide>
+      <title>Como dividimos os dados</title>
+      <table id="tbl:divisao">
+        <header>
+          <column></column>
+          <column>ENEM</column>
+          <column>CTG</column>
+        </header>
+        <row><column><strong>Cada linha é</strong></column><column>um participante</column><column>um trecho do monitoramento (vários por gestante)</column></row>
+        <row><column><strong>Treino e teste</strong></column><column>sorteio de participantes, 20% no teste</column><column>sorteio de gestantes inteiras, 20% delas no teste</column></row>
+        <row><column><strong>Tamanhos</strong></column><column>38.347 no treino, 9.587 no teste</column><column>1.755 exames (282 gestantes) no treino, 359 (70) no teste</column></row>
+        <row><column><strong>Estratificado?</strong></column><column>não se aplica (alvo contínuo)</column><column>não; conferido depois: 8,4% de patológicos no treino, 7,5% no teste</column></row>
+        <row><column><strong>Validação cruzada</strong></column><column>KFold(5) no treino</column><column>10 folds por gestante, estratificados pela classe</column></row>
+        <row><column><strong>Teste</strong></column><column>aberto uma vez, no fim</column><column>aberto uma vez, no fim</column></row>
+      </table>
+    </slide>
+        <slide>
+      <title>CTG: por que dividir por gestante</title>
+      <list>
+        <item>Cada gestante tem vários trechos de monitoramento (mediana de 4, até 34), e trechos da mesma gestante se parecem.</item>
+        <item>Se trechos da mesma gestante caem no treino e no teste, o modelo reconhece a gestante em vez de aprender o padrão.</item>
+        <item>O estado do bebê muda ao longo do monitoramento: 88 das 352 gestantes têm trechos de classes diferentes.</item>
+        <item>Das 50 gestantes com algum trecho patológico, só 15 têm todos os trechos patológicos. Por isso não dava para estratificar o teste por gestante.</item>
+      </list>
+    </slide>
   </section>
-  
 </document>

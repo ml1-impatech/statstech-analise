@@ -40,14 +40,13 @@
     <title>Problema de Regressão: ENEM 2023</title>
     <slide>
       <title>Quanto da nota de um participante é explicado pelo contexto socioeconômico e familiar?</title>
-      <!-- figura: E5 -->
       <box>
       <strong>Base de dados: microdados do INEP</strong>
       <list>
-        <item>50 mil participantes de 2023, sorteados entre os concluintes do ensino médio, presentes nas provas e não treineiros (38.347 no treino, 9.587 no teste);</item>
+      <item>Filtros: presentes nas 4 provas objetivas, não treineiros, concluintes do ensino médio em 2023 e com nota nas 5 áreas (incluindo a redação): 1.050.863 participantes;</item>
+      <item>Amostra sorteada de 50 mil; 38.347 no treino e 9.587 no teste;</item>
         <item>Alvo: médias das 5 provas;</item>
         <item>41 variáveis: renda per capita, escolaridade do pai e da mãe, tipo de escola, região, sexo, cor/raça, faixa etária e um índice de bens (PCA dos 19 itens do questionário);</item>
-        <item>Teste separado antes de imputar e de ajustar o PCA.</item>
       </list>
       </box>
     </slide>
@@ -392,6 +391,22 @@
     <slide>
       <title>ENEM: KNN em função de k</title>
       <figure src="../results/figures/enem_knn_rmse.png" alt="RMSE do KNN por número de vizinhos" id="fig:enem-knn"/>
+    </slide>
+
+    <slide>
+      <title>Como o K-means formou os perfis</title>
+      <columns>
+        <column>
+          <list>
+            <item>Cada aluno é um ponto num espaço de 4 variáveis: renda, bens e escolaridade do pai e da mãe.</item>
+            <item>O K-means encontrou 4 aglomerados sem olhar a nota; só depois calculamos a nota média de cada um.</item>
+            <item>k = 4 pelo cotovelo da inércia: a maior queda é de 3 para 4 grupos.</item>
+          </list>
+        </column>
+        <column>
+          <figure src="../results/figures/enem_kmeans_inercia.png" alt="Inércia do K-means por número de grupos" id="fig:enem-inercia"/>
+        </column>
+      </columns>
     </slide>
   </section>
 </document>

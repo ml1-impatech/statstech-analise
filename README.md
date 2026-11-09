@@ -107,7 +107,7 @@ statstech-analise/
   ```
 
 - **Depois da preparação**, os notebooks só carregam as bases com
-  `analysis.io.load_dataset` e usam statstech, NumPy e matplotlib.
+  `analysis.io.load_dataset` e usam statstech, NumPy e matplotlib (pandas aparece na exploração e nas tabelas do ENEM, e o scikit-learn só na comparação com a rede da statstech, no `enem_rede`).
 - **Código usado por mais de um notebook** vai para `src/analysis`, com
   docstring NumPy em português, type hints e teste.
 - **Cada notebook tem uma frente responsável**, para evitar conflitos de merge.

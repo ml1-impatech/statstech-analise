@@ -1,4 +1,4 @@
 model,rmse,rmse_std
 Média do treino,87.741,0.605
-Ridge,72.866,0.826
-Rede neural (3 sementes),72.624,0.863
+Ridge,72.475,0.784
+Rede neural (3 sementes),72.668,0.806

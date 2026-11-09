@@ -1,0 +1,13 @@
+model,method,cv,split,error,error_std,f1_macro,f1_macro_std,seconds
+Logística,KFold(10) por linha,KFold(10),por linha,0.1018,0.0025,0.8053,0.0059,1.0214
+Logística,KFold(10) por registro,KFold(10),por registro,0.1116,0.0028,0.7844,0.0081,1.1125
+Logística,LOOCV por linha,LOOCV,por linha,0.1026,0.0,0.8037,0.0,215.8603
+Logística,LOOCV por registro,LOOCV,por registro,0.114,0.0,0.7799,0.0,32.8357
+LDA,KFold(10) por linha,KFold(10),por linha,0.1203,0.0023,0.7664,0.0047,0.0091
+LDA,KFold(10) por registro,KFold(10),por registro,0.128,0.002,0.7447,0.0035,0.0212
+LDA,LOOCV por linha,LOOCV,por linha,0.1219,0.0,0.7627,0.0,1.62
+LDA,LOOCV por registro,LOOCV,por registro,0.1328,0.0,0.7406,0.0,0.2247
+QDA,KFold(10) por linha,KFold(10),por linha,0.1395,0.0014,0.7606,0.0016,0.0127
+QDA,KFold(10) por registro,KFold(10),por registro,0.1417,0.0019,0.7522,0.0029,0.0252
+QDA,LOOCV por linha,LOOCV,por linha,0.1373,0.0,0.7631,0.0,1.9869
+QDA,LOOCV por registro,LOOCV,por registro,0.1436,0.0,0.7525,0.0,0.3477

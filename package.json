@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "slides": "delta build slides/apresentacao.dlt -o slides/apresentacao.html",
+    "slides:watch": "delta build slides/apresentacao.dlt -o slides/apresentacao.html --watch"
+  },
+  "devDependencies": {
+    "delta-lang": "0.6.0"
+  }
+}

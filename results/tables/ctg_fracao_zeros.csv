@@ -1,0 +1,5 @@
+medida,Normal,Suspeito,Patológico
+FM,0.668,0.539,0.476
+DS,0.999,1.0,0.993
+DP,0.957,0.951,0.408
+Nzeros,0.754,0.845,0.741

@@ -13,11 +13,13 @@ Os microdados são armazenados localmente e não devem ser versionados no Git.
 import hashlib
 import io
 import tempfile
-import urllib.request
 import zipfile
 from pathlib import Path
+import sys
 
-from analysis.config import RAW
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from src.analysis.config import RAW
 
 URL = "https://download.inep.gov.br/microdados/microdados_enem_2023.zip"
 
@@ -54,15 +56,22 @@ def download(url: str, dest: Path, chunk: int = 1 << 20) -> Path:
     temporario = dest.with_suffix(dest.suffix + ".part")
 
     try:
-        with (
-            urllib.request.urlopen(url, timeout=60) as resposta,
-            temporario.open("wb") as arquivo,
-        ):
-            while True:
-                bloco = resposta.read(chunk)
-                if not bloco:
-                    break
-                arquivo.write(bloco)
+        import subprocess
+
+        subprocess.run(
+        [
+            "curl.exe",
+            "-L",
+            "--retry", "5",
+            "--retry-all-errors",
+            "--retry-delay", "3",
+            "--http1.1",
+            "-A", "Mozilla/5.0",
+            url,
+            "-o", str(temporario),
+        ],
+        check=True
+    )
 
         temporario.replace(dest)
 

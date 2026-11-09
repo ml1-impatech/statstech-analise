@@ -9,6 +9,16 @@ Máquina I (IMPA Tech, 2026.2).
 | ENEM 2023 | Regressão | Quanto da nota o contexto familiar e a escola explicam? |
 | Cardiotocografia (CTG) | Classificação em 3 classes | Dá para separar exames normais, suspeitos e patológicos só com as medidas automáticas? |
 
+## Resultados
+
+**ENEM (regressão).** Com validação cruzada no treino, a Ridge com codificação one-hot teve o menor erro (RMSE 72,5 pontos) e foi a escolhida. No teste, ela confirmou o resultado: RMSE 72,3 e R² 0,33, contra 88,4 de prever sempre a média. A rede neural empatou com ela (diferença de 0,13 ponto, IC 95% de −0,05 a 0,29). O contexto socioeconômico explica cerca de um terço da variação das notas, e de forma quase aditiva. Usaríamos a Ridge com one-hot: erra o mesmo que a rede, ajusta em segundos e é interpretável.
+
+**CTG (classificação).** Com validação cruzada por gestante, a regressão logística teve o maior F1 macro (0,78) e foi a escolhida. No teste, F1 macro de 0,77 e AUC de 0,97 para o patológico. Com o limiar de 0,11, escolhido por validação cruzada, o modelo encontra 25 dos 27 patológicos do teste (recall 0,93), ao custo de mais alarmes falsos (precisão 0,36).
+
+**Problemas encontrados.** Na CTG, cada gestante tem vários exames parecidos, e dividir por exame inflava as notas (o KNN parecia ótimo com k = 1); a solução foi validar por gestante. No ENEM, o KNN sofre com variáveis quase todas discretas, e o download dos microdados falhou várias vezes.
+
+As tabelas completas estão em `results/tables/` e as figuras em `results/figures/`. A discussão completa está nos slides (`slides/`).
+
 ## Como reproduzir
 
 Requer Python 3.11 ou mais recente.
@@ -22,7 +32,12 @@ python scripts/prepare_ctg.py
 python scripts/prepare_enem.py
 ```
 
-Depois, os notebooks na ordem: exploração, modelos e avaliação final.
+Depois, os notebooks na ordem:
+
+- CTG: `ctg_exploration` → `ctg_models` → `ctg_final`
+- ENEM: `enem_exploration_graficos` → `enem_exploration_kmeans` → `enem_linear` → `enem_knn` → `enem_rede` → `enem_final`
+
+Se o download do ENEM falhar com `connection reset`, rode o script de novo: ele usa o `curl` com novas tentativas e continua de onde parou. Também é possível baixar o ZIP pelo navegador e colocá-lo em `data/raw/microdados_enem_2023.zip`.
 
 O `requirements.txt` instala a statstech presa numa versão e instala o código
 de `src/analysis` em modo editável.
@@ -57,12 +72,25 @@ Após a filtragem, o script informa a quantidade de participantes restantes. Na 
 
 A amostra é salva em `data/processed/enem_amostra.csv`.
 
+Em seguida, o script codifica as respostas do questionário (em escalas ordinais em `enem.npz` e em colunas 0/1 em `enem_onehot.npz`) e separa treino (80%) e teste (20%) **antes** de imputar os valores faltantes (pela mediana do treino) e de ajustar o PCA que resume os 19 itens de bens num índice. Assim, o teste não influencia nenhuma dessas etapas.
+
+## Preparação dos dados da CTG
+
+O script `scripts/prepare_ctg.py` lê `data/raw/CTG.xls` (versionado no repositório) e:
+- remove as colunas com a classificação dos especialistas (CLASS, A a SUSP, LBE, DR), que entregariam a resposta;
+- remove 12 linhas duplicadas, todas dentro do mesmo registro;
+- converte as contagens (acelerações, contrações, desacelerações) em taxa por segundo;
+- separa treino e teste **por gestante** (`FileName`), para que exames da mesma gestante não fiquem nos dois lados.
+
+Restam 2.114 exames de 352 gestantes: 1.755 no treino e 359 no teste.
+
 ## Estrutura
 
 ```
 statstech-analise/
 ├── requirements.txt       dependências, com a statstech presa numa versão
 ├── pyproject.toml         instala src/analysis
+├── package.json           Delta, para gerar os slides
 ├── data/
 │   ├── raw/               CTG.xls versionado; microdados do ENEM fora do git
 │   └── processed/         ctg.npz, enem.npz, enem_onehot.npz (fora do git)
@@ -70,7 +98,7 @@ statstech-analise/
 ├── src/analysis/
 │   ├── config.py          semente, tamanhos e caminhos
 │   ├── io.py              salvar e carregar as bases preparadas
-│   ├── validation.py      divisão em treino e teste por registro
+│   ├── validation.py      divisão treino/teste e validação cruzada por gestante (CTG)
 │   ├── evaluation.py      métricas padronizadas para todos os modelos
 │   ├── report.py          tabelas e figuras em results/
 │   ├── threshold.py       limiar de decisão da CTG
@@ -102,17 +130,26 @@ statstech-analise/
   ```
 
 - **Depois da preparação**, os notebooks só carregam as bases com
-  `analysis.io.load_dataset` e usam statstech, NumPy e matplotlib.
+  `analysis.io.load_dataset` e usam statstech, NumPy e matplotlib (pandas aparece na exploração e nas tabelas do ENEM, e o scikit-learn só na comparação com a rede da statstech, no `enem_rede`).
 - **Código usado por mais de um notebook** vai para `src/analysis`, com
   docstring NumPy em português, type hints e teste.
 - **Cada notebook tem uma frente responsável**, para evitar conflitos de merge.
-- **Fluxo no git:** `main` protegida, uma branch por tarefa
-  (`comum/c3-embrulho`, `ctg/t4-modelos`, ...) e Pull Request com uma revisão.
+
+## Slides
+
+A apresentação está em `slides/apresentacao.dlt`, escrita em [Delta](https://github.com/rbribeiro/delta). Para gerar o HTML (requer Node.js 20 ou mais recente):
+
+```bash
+npm install
+npm run slides
+```
+
+O resultado é `slides/apresentacao.html`, que abre em qualquer navegador.
 
 ## Testes
 
 ```bash
-pytest
+python -m pytest
 ```
 
 ## Autores
@@ -127,6 +164,10 @@ pytest
 | Manuela Ronconi | [manuronconi](https://github.com/manuronconi) |
 | Maria Clara Fernandes | [mclaracarvalhoo](https://github.com/mclaracarvalhoo) |
 | Maria Izabelle Silva | [izabelle02](https://github.com/izabelle02) |
+
+## Uso de IA
+
+Seguindo as políticas internas da instituição, o Claude (Anthropic) foi utilizado como ferramenta de consulta para explicações de conceitos e dos resultados, revisão de código e verificação de vazamento de dados, rascunhos de docstrings, testes e trechos dos slides, e apoio com o git. As decisões de análise, a escolha dos modelos e a interpretação dos resultados foram do grupo, e todo o código foi revisado e executado pelos integrantes.
 
 ## Licença
 

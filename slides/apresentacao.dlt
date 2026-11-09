@@ -51,6 +51,36 @@
       </list>
       </box>
     </slide>
+        <slide>
+      <title>A desigualdade nos dados: escola e renda</title>
+      <columns>
+        <column>
+          <figure src="../results/figures/enem_notas_tipo_escola.png" alt="Notas por tipo de escola" id="fig:enem-escola"/>
+        </column>
+        <column>
+          <figure src="../results/figures/enem_renda_escolaridade_mae.png" alt="Nota por renda e escolaridade da mãe" id="fig:enem-renda"/>
+        </column>
+      </columns>
+      <list>
+        <item>Escola privada: mediana cerca de 100 pontos acima da pública, com muita sobreposição.</item>
+        <item>A nota sobe com a renda e com a escolaridade da mãe (nas rendas altas há poucos participantes, e as linhas oscilam).</item>
+      </list>
+    </slide>
+        <slide>
+      <title>Distribuição das notas</title>
+      <columns>
+        <column>
+          <figure src="../results/figures/enem_distribuicao_notas.png" alt="Histograma das notas médias" id="fig:enem-hist"/>
+        </column>
+        <column>
+          <figure src="../results/figures/enem_nota_indice_bens.png" alt="Nota contra índice de bens" id="fig:enem-bens"/>
+        </column>
+      </columns>
+      <list>
+        <item>Notas concentradas em torno de 550 pontos, com desvio de cerca de 88.</item>
+        <item>Índice de bens × nota: correlação de 0,41, moderada.</item>
+      </list>
+    </slide>
     <slide>
       <title>Perfis socioeconômicos (K-means)</title>
       <figure src="../results/figures/enem_perfis_kmeans.png">
@@ -294,22 +324,6 @@
       <row><column>Pré-processamento por coluna</column><column align="right">Aplicar PCA e imputação só em algumas colunas dentro do <c>Pipeline</c> (como o <c>ColumnTransformer</c>); no ENEM eles ficaram fora da validação cruzada</column></row>
     </table>
     </slide>
-    <slide>
-      <title>statstech × scikit-learn nos mesmos dados</title>
-      <table id="tbl:sklearn">
-        <title>CTG: F1 macro na validação cruzada (mesmos 10 folds por registro)</title>
-        <header>
-          <column>Modelo</column>
-          <column align="right">statstech</column>
-          <column align="right">scikit-learn</column>
-        </header>
-        <row><column>KNN (k = 15)</column><column align="right">0,723</column><column align="right">0,723</column></row>
-        <row><column>LDA</column><column align="right">0,715</column><column align="right">0,715</column></row>
-        <row><column>QDA (melhor da grade)</column><column align="right">0,733</column><column align="right">0,728</column></row>
-        <row><column>Logística (melhor da grade)</column><column align="right">0,780</column><column align="right">0,777</column></row>
-      </table>
-      ENEM: rede da statstech com RMSE 72,6 na validação cruzada, contra 72,4 da rede do scikit-learn (com Adam e regularização).
-    </slide>
 
     <slide>
       <title>Como evitamos vazamento de dados</title>
@@ -323,31 +337,6 @@
     </slide>
 
     <slide>
-      <title>CTG: escolha dos hiperparâmetros</title>
-      <figure src="../results/figures/ctg_busca.png" alt="F1 macro contra cada hiperparâmetro" id="fig:ctg-busca"/>
-    </slide>
-
-    <slide>
-      <title>ENEM: número de épocas da rede</title>
-      <figure src="../results/figures/enem_rede_perda.png" alt="Perda no treino e RMSE na validação por época" id="fig:enem-epocas"/>
-    </slide>
-
-    <slide>
-      <title>ENEM: para quem o modelo erra mais</title>
-      <figure src="../results/figures/enem_rmse_grupo.png" alt="RMSE no teste por grupo" id="fig:enem-grupo"/>
-    </slide>
-
-    <slide>
-      <title>As métricas da CTG</title>
-      <list>
-        <item><strong>Recall:</strong> dos patológicos de verdade, quantos o modelo encontrou.</item>
-        <item><strong>Precisão:</strong> dos alarmes de patológico, quantos eram de verdade.</item>
-        <item><strong>F1 macro:</strong> média do F1 de cada classe; as classes raras pesam igual à normal.</item>
-        <item><strong>AUC:</strong> chance de um patológico receber risco maior que um não patológico.</item>
-        <item>Acurácia engana: dizer sempre "normal" acerta 79% e não encontra nenhum patológico.</item>
-      </list>
-    </slide>
-        <slide>
       <title>Como dividimos os dados</title>
       <table id="tbl:divisao">
         <header>
@@ -363,7 +352,24 @@
         <row><column><strong>Teste</strong></column><column>aberto uma vez, no fim</column><column>aberto uma vez, no fim</column></row>
       </table>
     </slide>
-        <slide>
+
+    <slide>
+      <title>CTG: escolha dos hiperparâmetros</title>
+      <figure src="../results/figures/ctg_busca.png" alt="F1 macro contra cada hiperparâmetro" id="fig:ctg-busca"/>
+    </slide>
+
+    <slide>
+      <title>As métricas da CTG</title>
+      <list>
+        <item><strong>Recall:</strong> dos patológicos de verdade, quantos o modelo encontrou.</item>
+        <item><strong>Precisão:</strong> dos alarmes de patológico, quantos eram de verdade.</item>
+        <item><strong>F1 macro:</strong> média do F1 de cada classe; as classes raras pesam igual à normal.</item>
+        <item><strong>AUC:</strong> chance de um patológico receber risco maior que um não patológico.</item>
+        <item>Acurácia engana: dizer sempre "normal" acerta 79% e não encontra nenhum patológico.</item>
+      </list>
+    </slide>
+
+    <slide>
       <title>CTG: por que dividir por gestante</title>
       <list>
         <item>Cada gestante tem vários trechos de monitoramento (mediana de 4, até 34), e trechos da mesma gestante se parecem.</item>
@@ -371,6 +377,21 @@
         <item>O estado do bebê muda ao longo do monitoramento: 88 das 352 gestantes têm trechos de classes diferentes.</item>
         <item>Das 50 gestantes com algum trecho patológico, só 15 têm todos os trechos patológicos. Por isso não dava para estratificar o teste por gestante.</item>
       </list>
+    </slide>
+
+    <slide>
+      <title>ENEM: número de épocas da rede</title>
+      <figure src="../results/figures/enem_rede_perda.png" alt="Perda no treino e RMSE na validação por época" id="fig:enem-epocas"/>
+    </slide>
+
+    <slide>
+      <title>ENEM: para quem o modelo erra mais</title>
+      <figure src="../results/figures/enem_rmse_grupo.png" alt="RMSE no teste por grupo" id="fig:enem-grupo"/>
+    </slide>
+        
+    <slide>
+      <title>ENEM: KNN em função de k</title>
+      <figure src="../results/figures/enem_knn_rmse.png" alt="RMSE do KNN por número de vizinhos" id="fig:enem-knn"/>
     </slide>
   </section>
 </document>

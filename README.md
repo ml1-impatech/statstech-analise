@@ -22,7 +22,12 @@ python scripts/prepare_ctg.py
 python scripts/prepare_enem.py
 ```
 
-Depois, os notebooks na ordem: exploração, modelos e avaliação final.
+Depois, os notebooks na ordem:
+
+- CTG: `ctg_exploration` → `ctg_models` → `ctg_final`
+- ENEM: `enem_exploration_graficos` → `enem_exploration_kmeans` → `enem_linear` → `enem_knn` → `enem_rede` → `enem_final`
+
+Se o download do ENEM falhar com `connection reset`, rode o script de novo: ele usa o `curl` com novas tentativas e continua de onde parou. Também é possível baixar o ZIP pelo navegador e colocá-lo em `data/raw/microdados_enem_2023.zip`.
 
 O `requirements.txt` instala a statstech presa numa versão e instala o código
 de `src/analysis` em modo editável.

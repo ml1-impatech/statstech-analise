@@ -1,0 +1,11 @@
+/* Figuras dos slides: nunca maiores que a área do slide. */
+:root[data-type="presentation"] delta-slide .figure {
+  margin: 8px 0;
+}
+:root[data-type="presentation"] delta-slide .figure-frame img {
+  max-height: 55vh;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}

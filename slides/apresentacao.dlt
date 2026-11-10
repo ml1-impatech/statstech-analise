@@ -214,18 +214,28 @@
       Hiperparâmetros escolhidos por validação cruzada: logística com $\alpha = 10$; LDA com regularização $10^{-6}$; QDA com regularização $0{,}5$; KNN com $k = 15$.
     </slide>
 
-    <slide>
+        <slide>
       <title>Por que dividir por registro?</title>
       <columns>
+        <column width="3">
+          <table id="tbl:linha-registro">
+            <title>F1 macro na validação cruzada (10 folds)</title>
+            <header>
+              <column>Modelo</column>
+              <column align="right">Folds por exame</column>
+              <column align="right">Folds por gestante</column>
+            </header>
+            <row><column>KNN</column><column align="right">0,834 (k = 1)</column><column align="right">0,723 (k = 15)</column></row>
+            <row><column>Logística</column><column align="right">0,805</column><column align="right">0,784</column></row>
+            <row><column>LDA</column><column align="right">0,766</column><column align="right">0,745</column></row>
+            <row><column>QDA</column><column align="right">0,761</column><column align="right">0,752</column></row>
+          </table>
+        </column>
         <column width="2">
           <list>
-            <item>KNN com folds por exame: melhor k = 1, F1 = 0,834;</item>
-            <item>Com folds por registro: melhor k = 15, F1 = 0,723;</item>
-            <item>Com k = 1, o vizinho mais próximo é outro exame da mesma gestante.</item>
+            <item>Dividindo por exame, o KNN copia outro exame da mesma gestante: parece ótimo com k = 1.</item>
+            <item>Na logística, no LDA e no QDA o efeito é pequeno (cerca de 0,02) e a ordem não muda.</item>
           </list>
-        </column>
-        <column width="3">
-          <figure src="../results/figures/ctg_loocv_kfold.png"></figure>
         </column>
       </columns>
     </slide>
@@ -244,7 +254,7 @@
         <title>No teste, o modelo deixa passar 2 dos 27 patológicos</title>
         <list>
           <item>Recall do patológico: 0,74 sem limiar e 0,93 com limiar (IC 95%: 0,82 a 1,00);</item>
-          <item>Precisão: 0,36. A maioria dos alarmes falsos vem da classe “suspeito”;</item>
+          <item>Precisão: 0,36. A maioria dos alarmes falsos vem da classe “suspeito” (valores relativos);</item>
           <item>AUC do patológico: 0,97;</item>
           <item>O F1 macro no teste (0,77) bate com o da validação cruzada (0,78).</item>
         </list>
@@ -267,6 +277,7 @@
         <item><strong>Problemas:</strong> vários exames por gestante (era preciso validar por registro); só 8% de patológicos; a classe suspeito é a mais difícil.</item>
         <item><strong>Qual usaríamos:</strong> a logística ($\alpha = 10$) com limiar 0,11. Deixa passar 2 dos 27 patológicos, ao custo de mais alarmes falsos.</item>
       </list>
+      Várias medidas são assimétricas e cheias de zeros, longe da normal que LDA e QDA supõem; o log não resolveu, e a logística, que não supõe normalidade, foi a melhor.
     </slide>
   </subsection>
   </section>
@@ -389,7 +400,57 @@
       </list>
     </slide>
 
-        <slide>
+    <slide>
+      <title>CTG: medidas longe da normal</title>
+      <columns>
+        <column width="3">
+          <table id="tbl:assimetria">
+            <title>Assimetria no treino (0 = simétrica)</title>
+            <header>
+              <column>Medida</column>
+              <column align="right">Antes</column>
+              <column align="right">Com log</column>
+              <column align="right">Zeros (normais)</column>
+              <column align="right">Zeros (patológicos)</column>
+            </header>
+            <row><column>DS (desacel. graves)</column><column align="right">30,0</column><column align="right">29,7</column><column align="right">99,9%</column><column align="right">99,3%</column></row>
+            <row><column>FM (movimentos)</column><column align="right">8,9</column><column align="right">1,4</column><column align="right">66,8%</column><column align="right">47,6%</column></row>
+            <row><column>DP (desacel. prolongadas)</column><column align="right">4,1</column><column align="right">3,1</column><column align="right">95,7%</column><column align="right">40,8%</column></row>
+            <row><column>Variance</column><column align="right">2,7</column><column align="right">0,1</column><column align="right">—</column><column align="right">—</column></row>
+          </table>
+        </column>
+        <column width="2">
+          <list>
+            <item>LDA e QDA supõem medidas com distribuição normal.</item>
+            <item>O log reduz a assimetria, mas não some com os zeros.</item>
+            <item>Com log, LDA e QDA não melhoraram (F1 0,72 e 0,73).</item>
+          </list>
+        </column>
+      </columns>
+    </slide>
+
+    <slide>
+      <title>CTG: LOOCV × KFold(10)</title>
+      <figure src="../results/figures/ctg_loocv_kfold.png" alt="Erro e tempo da LOOCV e do KFold(10), por linha e por registro" id="fig:ctg-loocv"/>
+      A LOOCV dá praticamente o mesmo erro que o KFold(10) (diferença abaixo de 0,01), mas leva muito mais tempo: na logística, 216 s contra 1 s.
+    </slide>
+
+    <slide>
+      <title>ENEM: número de épocas da rede</title>
+      <figure src="../results/figures/enem_rede_perda.png" alt="Perda no treino e RMSE na validação por época" id="fig:enem-epocas"/>
+    </slide>
+
+    <slide>
+      <title>ENEM: para quem o modelo erra mais</title>
+      <figure src="../results/figures/enem_rmse_grupo.png" alt="RMSE no teste por grupo" id="fig:enem-grupo"/>
+    </slide>
+        
+    <slide>
+      <title>ENEM: KNN em função de k</title>
+      <figure src="../results/figures/enem_knn_rmse.png" alt="RMSE do KNN por número de vizinhos" id="fig:enem-knn"/>
+    </slide>
+
+    <slide>
       <title>O índice de bens</title>
       <columns>
         <column>
@@ -411,21 +472,6 @@
           </list>
         </column>
       </columns>
-    </slide>
-
-    <slide>
-      <title>ENEM: número de épocas da rede</title>
-      <figure src="../results/figures/enem_rede_perda.png" alt="Perda no treino e RMSE na validação por época" id="fig:enem-epocas"/>
-    </slide>
-
-    <slide>
-      <title>ENEM: para quem o modelo erra mais</title>
-      <figure src="../results/figures/enem_rmse_grupo.png" alt="RMSE no teste por grupo" id="fig:enem-grupo"/>
-    </slide>
-        
-    <slide>
-      <title>ENEM: KNN em função de k</title>
-      <figure src="../results/figures/enem_knn_rmse.png" alt="RMSE do KNN por número de vizinhos" id="fig:enem-knn"/>
     </slide>
 
     <slide>

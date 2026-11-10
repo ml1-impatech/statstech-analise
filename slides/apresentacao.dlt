@@ -287,7 +287,7 @@
     <slide>
       <title>Conclusão e limitações</title>
       <list>
-        <item><strong>CTG (medidas contínuas):</strong> a forma de validar pesou mais que a escolha do modelo.</item>
+        <item><strong>CTG (medidas contínuas):</strong> dividir por gestante mudou a escolha do KNN (k = 1 para k = 15), mas pouco os outros modelos; a logística foi a melhor das duas formas.</item>
         <item><strong>ENEM (variáveis categóricas):</strong> modelos lineares bastam; a relação é quase aditiva.</item>
         <item><strong>statstech × scikit-learn:</strong> na mesma validação cruzada do ENEM, a rede da statstech ficou a 0,2 ponto de RMSE da rede do scikit-learn (72,6 contra 72,4).</item>
         <item><strong>Limitações:</strong> ENEM é associação, não causa, e só concluintes de 2023; CTG tem 352 gestantes de um único centro e só 27 patológicos no teste.</item>
